@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f1b2b;
+  --turquoise: #319795;
+  --navy: #1e3a5f;
+  --gold: #d4a017;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  direction: rtl;
+  text-align: right;
+  min-height: 100vh;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-turquoise-600 hover:bg-turquoise-700 text-white font-medium py-2.5 px-6 rounded-xl 
+           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5
+           active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-navy-500 hover:bg-navy-600 text-white font-medium py-2.5 px-6 rounded-xl 
+           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5;
+  }
+
+  .btn-gold {
+    @apply bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold py-2.5 px-6 rounded-xl 
+           transition-all duration-300 shadow-gold hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply border-2 border-turquoise-600 text-turquoise-700 hover:bg-turquoise-50 font-medium 
+           py-2 px-5 rounded-xl transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 
+           border border-slate-100 overflow-hidden;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-turquoise-500 
+           focus:ring-2 focus:ring-turquoise-200 outline-none transition-all duration-200
+           bg-white text-navy-900 placeholder:text-slate-400;
+  }
+
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold text-navy-800 relative inline-block mb-8;
+  }
+
+  .section-title::after {
+    content: '';
+    @apply absolute bottom-0 right-0 w-1/2 h-1 bg-gradient-to-l from-turquoise-500 to-gold-400 rounded-full;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-slate-200 rounded-lg;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Selection */
+::selection {
+  background: #4fd1c5;
+  color: #0f1b2b;
+}
