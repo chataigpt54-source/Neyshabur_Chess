@@ -46,8 +46,12 @@ export default function RegistrationForm({ tournamentId }: { tournamentId: strin
       if (dbError) throw dbError;
       setSuccess(true);
       reset();
-    } catch (e: any) {
-      setError(e.message || 'خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.');
+    } catch (e: unknown) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : 'خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.'
+      );
     }
   };
 
@@ -69,34 +73,60 @@ export default function RegistrationForm({ tournamentId }: { tournamentId: strin
       <div>
         <label className="block text-sm font-medium text-navy-700 mb-1.5">نام و نام خانوادگی *</label>
         <input {...register('full_name')} className="input-field" placeholder="مثال: علی رضایی" />
-        {errors.full_name && <p className="text-red-500 text-sm mt-1">{errors.full_name.message}</p>}
+        {errors.full_name && (
+          <p className="text-red-500 text-sm mt-1">{errors.full_name.message}</p>
+        )}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-navy-700 mb-1.5">شماره موبایل *</label>
-        <input {...register('phone')} className="input-field" placeholder="09xxxxxxxxx" dir="ltr" />
+        <input
+          {...register('phone')}
+          className="input-field"
+          placeholder="09xxxxxxxxx"
+          dir="ltr"
+        />
         {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-navy-700 mb-1.5">ایمیل</label>
-        <input {...register('email')} type="email" className="input-field" placeholder="email@example.com" dir="ltr" />
+        <input
+          {...register('email')}
+          type="email"
+          className="input-field"
+          placeholder="email@example.com"
+          dir="ltr"
+        />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
       </div>
 
       <div>
         <label className="block text-sm font-medium text-navy-700 mb-1.5">کد ملی</label>
-        <input {...register('national_id')} className="input-field" placeholder="اختیاری" dir="ltr" />
+        <input
+          {...register('national_id')}
+          className="input-field"
+          placeholder="اختیاری"
+          dir="ltr"
+        />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-navy-700 mb-1.5">توضیحات</label>
-        <textarea {...register('notes')} rows={3} className="input-field resize-none" placeholder="توضیحات اضافی (اختیاری)" />
+        <textarea
+          {...register('notes')}
+          rows={3}
+          className="input-field resize-none"
+          placeholder="توضیحات اضافی (اختیاری)"
+        />
       </div>
 
       {error && <p className="text-red-500 text-sm bg-red-50 p-3 rounded-xl">{error}</p>}
-
-      <button type="submit" disabled={isSubmitting} className="btn-primary w-full flex items-center justify-center gap-2">
+<button
+        type="submit"
+        disabled={isSubmitting}
+        className="btn-primary w-full flex items-center justify-center gap-2"
+      >
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />

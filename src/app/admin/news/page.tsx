@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Plus, Pencil, Trash2, Loader2, Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import type { News } from '@/types/database';
 
@@ -46,12 +45,15 @@ export default function AdminNewsPage() {
   const save = async () => {
     if (!form.title.trim()) return;
     setSaving(true);
-    const slug = form.title
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w\u0600-\u06FF\-]+/g, '')
-      .slice(0, 80) + '-' + Date.now().toString(36);
+    const slug =
+      form.title
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\u0600-\u06FF\-]+/g, '')
+        .slice(0, 80) +
+      '-' +
+      Date.now().toString(36);
 
     if (editing) {
       await supabase
@@ -121,7 +123,7 @@ export default function AdminNewsPage() {
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={form.published}
+checked={form.published}
               onChange={(e) => setForm({ ...form, published: e.target.checked })}
               className="w-4 h-4 rounded"
             />
