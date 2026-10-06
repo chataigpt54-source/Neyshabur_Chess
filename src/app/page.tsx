@@ -57,7 +57,7 @@ export default async function HomePage() {
               </Link>
               <Link href="/players" className="btn-outline border-white/40 text-white hover:bg-white/10 inline-flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                بازیکنان و مربیان
+                بازیکنان و مربیان و داوران
               </Link>
             </div>
           </div>
