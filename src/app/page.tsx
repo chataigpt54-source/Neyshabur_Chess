@@ -32,41 +32,66 @@ export default async function HomePage() {
           <div className="absolute bottom-20 left-20 w-24 h-24 border border-turquoise-300 rounded-full" />
           <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-gold-500/20 rounded-lg rotate-45" />
         </div>
-        
-        <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm text-gold-300 mb-6 animate-fade-in">
-              <Trophy className="w-4 h-4" />
-              <span>وب‌سایت رسمی هیأت شطرنج</span>
+
+        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+            {/* متن */}
+            <div className="max-w-3xl flex-1 text-center lg:text-right">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm text-gold-300 mb-6 animate-fade-in">
+                <Trophy className="w-4 h-4" />
+                <span>وب‌سایت رسمی هیأت شطرنج</span>
+              </div>
+
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 animate-slide-up">
+                هیأت شطرنج
+                <span className="block text-turquoise-300 mt-2">شهرستان نیشابور</span>
+              </h1>
+
+              <p
+                className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl leading-relaxed animate-slide-up mx-auto lg:mx-0"
+                style={{ animationDelay: '0.1s' }}
+              >
+                مرکز توسعه، آموزش و برگزاری مسابقات شطرنج در نیشابور.
+                همراه ما باشید تا استعدادهای شطرنجی شهرستان را شکوفا کنیم.
+              </p>
+
+              <div
+                className="flex flex-wrap gap-4 justify-center lg:justify-start animate-slide-up"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <Link href="/tournaments" className="btn-gold inline-flex items-center gap-2">
+                  تورنمنت‌ها
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/players"
+                  className="btn-outline border-white/40 text-white hover:bg-white/10 inline-flex items-center gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  بازیکنان و مربیان و داوران
+                </Link>
+              </div>
             </div>
-            
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 animate-slide-up">
-              هیأت شطرنج
-              <span className="block text-turquoise-300 mt-2">شهرستان نیشابور</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              مرکز توسعه، آموزش و برگزاری مسابقات شطرنج در نیشابور. 
-              همراه ما باشید تا استعدادهای شطرنجی شهرستان را شکوفا کنیم.
-            </p>
-            
-            <div className="flex flex-wrap gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <Link href="/tournaments" className="btn-gold inline-flex items-center gap-2">
-                تورنمنت‌ها
-                <ArrowLeft className="w-4 h-4" />
-              </Link>
-              <Link href="/players" className="btn-outline border-white/40 text-white hover:bg-white/10 inline-flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                بازیکنان و مربیان و داوران
-              </Link>
+
+            {/* تصویر آرامگاه خیام */}
+            <div className="flex-shrink-0 w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] animate-fade-in">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/file_00000000184481f486baeb5bf817c9a8.jpg"
+                alt="آرامگاه خیام نیشابور"
+                className="w-full h-auto drop-shadow-2xl rounded-2xl"
+              />
             </div>
           </div>
         </div>
-        
+
         {/* Wave */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 40L48 35C96 30 192 20 288 25C384 30 480 50 576 55C672 60 768 50 864 40C960 30 1056 20 1152 25C1248 30 1344 50 1392 60L1440 70V80H0V40Z" fill="#f8fafc"/>
+            <path
+              d="M0 40L48 35C96 30 192 20 288 25C384 30 480 50 576 55C672 60 768 50 864 40C960 30 1056 20 1152 25C1248 30 1344 50 1392 60L1440 70V80H0V40Z"
+              fill="#f8fafc"
+            />
           </svg>
         </div>
       </section>
@@ -78,7 +103,10 @@ export default async function HomePage() {
             <Newspaper className="w-7 h-7 text-turquoise-600" />
             آخرین اخبار
           </h2>
-          <Link href="/news" className="text-turquoise-600 hover:text-turquoise-700 text-sm font-medium flex items-center gap-1">
+          <Link
+            href="/news"
+            className="text-turquoise-600 hover:text-turquoise-700 text-sm font-medium flex items-center gap-1"
+          >
             مشاهده همه
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -117,7 +145,9 @@ export default async function HomePage() {
                   <h3 className="font-bold text-navy-800 mt-2 group-hover:text-turquoise-700 transition-colors line-clamp-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-2 line-clamp-2">{truncate(item.content, 100)}</p>
+                  <p className="text-sm text-slate-500 mt-2 line-clamp-2">
+                    {truncate(item.content, 100)}
+                  </p>
                 </div>
               </Link>
             ))}
