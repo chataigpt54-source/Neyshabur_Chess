@@ -27,12 +27,6 @@ export default async function HomePage() {
     <div>
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-gradient-to-bl from-navy-900 via-navy-800 to-turquoise-800 text-white">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-40 h-40 border-2 border-gold-400 rounded-full animate-float" />
-          <div className="absolute bottom-20 left-20 w-24 h-24 border border-turquoise-300 rounded-full" />
-          <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-gold-500/20 rounded-lg rotate-45" />
-        </div>
-
         <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             {/* متن */}
@@ -73,11 +67,11 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* تصویر آرامگاه خیام */}
+            {/* تصویر */}
             <div className="flex-shrink-0 w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] animate-fade-in">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/file_00000000184481f486baeb5bf817c9a8.jpg"
+                src="https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/file_000000002fcc82109bb81af8b1e39b62.jpg"
                 alt="آرامگاه خیام نیشابور"
                 className="w-full h-auto drop-shadow-2xl rounded-2xl"
               />
