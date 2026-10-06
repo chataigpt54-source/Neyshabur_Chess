@@ -67,14 +67,19 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* تصویر */}
-            <div className="flex-shrink-0 w-full max-w-[280px] md:max-w-[320px] lg:max-w-[360px] animate-fade-in">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/file_000000002fcc82109bb81af8b1e39b62.jpg"
-                alt="آرامگاه خیام نیشابور"
-                className="w-full h-auto drop-shadow-2xl rounded-2xl"
-              />
+            {/* کادر ویدیو */}
+            <div className="flex-shrink-0 w-full max-w-[320px] md:max-w-[380px] lg:max-w-[420px] animate-fade-in">
+              <div className="rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/20 bg-black/40">
+                <video
+                  src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000087731%20-%20herminal.com%20compressed.mp4"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-auto block"
+                >
+                  مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                </video>
+              </div>
             </div>
           </div>
         </div>
