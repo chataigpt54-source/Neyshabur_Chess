@@ -11,6 +11,7 @@ async function getPlayers() {
     const { data } = await supabase
       .from('players')
       .select('*')
+      .order('sort_order', { ascending: true })
       .order('name', { ascending: true });
     return data || [];
   } catch {
@@ -32,7 +33,6 @@ export default async function PlayersPage() {
         <div className="card p-16 text-center">
           <Users className="w-20 h-20 text-slate-300 mx-auto mb-4" />
           <p className="text-slate-500 text-xl">هنوز بازیکنی ثبت نشده است</p>
-        
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -46,7 +46,11 @@ export default async function PlayersPage() {
                 <div className="w-28 h-28 mx-auto rounded-full overflow-hidden bg-gradient-to-br from-turquoise-100 to-navy-100 shadow-soft mb-4 ring-4 ring-white group-hover:ring-turquoise-200 transition-all">
                   {player.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
+                    <img
+                      src={player.photo_url}
+                      alt={player.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <User className="w-12 h-12 text-turquoise-400" />
