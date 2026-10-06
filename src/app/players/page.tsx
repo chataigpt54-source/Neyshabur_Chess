@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { Users, User } from 'lucide-react';
 
-export const metadata = { title: 'بازیکنان' };
+export const metadata = { title: 'بازیکنان و مربیان' };
 export const revalidate = 60;
 
 async function getPlayers() {
