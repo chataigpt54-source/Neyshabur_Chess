@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { Users, User } from 'lucide-react';
 
-export const metadata = { title: 'بازیکنان و مربیان' };
+export const metadata = { title: 'بازیکنان و مربیان و داوران' };
 export const revalidate = 60;
 
 async function getPlayers() {
@@ -25,7 +25,7 @@ export default async function PlayersPage() {
     <div className="container mx-auto px-4 py-12">
       <h1 className="section-title flex items-center gap-2 mb-10">
         <Users className="w-8 h-8 text-turquoise-600" />
-        بازیکنان و مربیان
+        بازیکنان و مربیان و داوران
       </h1>
 
       {players.length === 0 ? (
