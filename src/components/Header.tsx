@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const navItems = [
   { href: '/', label: 'صفحه اصلی' },
   { href: '/news', label: 'اخبار' },
-  { href: '/players', label: ' بازیکنان و مربیان' },
+  { href: '/players', label: ' بازیکنان و مربیان و داوران' },
   { href: '/tournaments', label: 'تورنمنت‌ها' },
   { href: '/gallery', label: 'گالری' },
   { href: '/about', label: 'درباره ما' },
