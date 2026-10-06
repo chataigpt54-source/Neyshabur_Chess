@@ -5,11 +5,13 @@ import { supabase } from '@/lib/supabase';
 import { Plus, Pencil, Trash2, Loader2, User, GripVertical } from 'lucide-react';
 import type { Player } from '@/types/database';
 
+type PlayerWithOrder = Player & { sort_order?: number };
+
 export default function AdminPlayersPage() {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<PlayerWithOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState<Player | null>(null);
+  const [editing, setEditing] = useState<PlayerWithOrder | null>(null);
   const [form, setForm] = useState({ name: '', photo_url: '', bio: '', achievements: '' });
   const [saving, setSaving] = useState(false);
   const [reordering, setReordering] = useState(false);
@@ -24,7 +26,7 @@ export default function AdminPlayersPage() {
       .select('*')
       .order('sort_order', { ascending: true })
       .order('name', { ascending: true });
-    setPlayers(data || []);
+    setPlayers((data as PlayerWithOrder[]) || []);
     setLoading(false);
   };
 
@@ -38,7 +40,7 @@ export default function AdminPlayersPage() {
     setShowForm(true);
   };
 
-  const openEdit = (p: Player) => {
+  const openEdit = (p: PlayerWithOrder) => {
     setEditing(p);
     setForm({
       name: p.name,
@@ -65,10 +67,10 @@ export default function AdminPlayersPage() {
         })
         .eq('id', editing.id);
     } else {
-      const maxOrder = players.reduce((max, p: any) => {
-        const order = typeof p.sort_order === 'number' ? p.sort_order : 0;
-        return Math.max(max, order);
-      }, -1);
+      const maxOrder = players.reduce(
+        (max, p) => Math.max(max, p.sort_order ?? 0),
+        -1
+      );
 
       await supabase.from('players').insert({
         name: form.name,
