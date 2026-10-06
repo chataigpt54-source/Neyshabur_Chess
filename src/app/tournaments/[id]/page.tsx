@@ -28,13 +28,39 @@ const statusMap = {
   past: { label: 'گذشته', class: 'bg-slate-100 text-slate-600' },
 };
 
+/** تبدیل URLهای داخل متن به لینک کلیک‌پذیر */
+function linkify(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-turquoise-600 hover:text-turquoise-700 underline break-all"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 export default async function TournamentDetailPage({ params }: { params: { id: string } }) {
   const tournament = await getTournament(params.id);
   if (!tournament) notFound();
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <Link href="/tournaments" className="inline-flex items-center gap-2 text-turquoise-600 hover:text-turquoise-700 mb-8 text-sm font-medium">
+      <Link
+        href="/tournaments"
+        className="inline-flex items-center gap-2 text-turquoise-600 hover:text-turquoise-700 mb-8 text-sm font-medium"
+      >
         <ArrowRight className="w-4 h-4" />
         بازگشت به تورنمنت‌ها
       </Link>
@@ -43,13 +69,21 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
         {tournament.image_url && (
           <div className="aspect-[21/9] overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={tournament.image_url} alt={tournament.title} className="w-full h-full object-cover" />
+            <img
+              src={tournament.image_url}
+              alt={tournament.title}
+              className="w-full h-full object-cover"
+            />
           </div>
         )}
         <div className="p-6 md:p-8">
           <div className="flex flex-wrap gap-2 mb-4">
-            <span className={`text-sm px-3 py-1 rounded-full font-medium ${statusMap[tournament.status].class}`}>
-              {statusMap[tournament.status].label}
+            <span
+              className={`text-sm px-3 py-1 rounded-full font-medium ${
+                statusMap[tournament.status as keyof typeof statusMap].class
+              }`}
+            >
+              {statusMap[tournament.status as keyof typeof statusMap].label}
             </span>
             {tournament.registration_open && tournament.status !== 'past' && (
               <span className="text-sm px-3 py-1 rounded-full bg-gold-100 text-gold-700 font-medium">
@@ -58,7 +92,9 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
             )}
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-navy-800 mb-4">{tournament.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-navy-800 mb-4">
+            {tournament.title}
+          </h1>
 
           <div className="flex flex-wrap gap-6 text-slate-600 mb-6">
             <span className="flex items-center gap-2">
@@ -84,7 +120,7 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
 
           {tournament.description && (
             <div className="text-slate-600 leading-relaxed whitespace-pre-wrap border-t border-slate-100 pt-6">
-              {tournament.description}
+              {linkify(tournament.description)}
             </div>
           )}
         </div>
