@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { formatDate, truncate } from '@/lib/utils';
-import { Calendar, Newspaper, Trophy, ArrowLeft, Users } from 'lucide-react';
+import { Newspaper, Trophy, ArrowLeft, Users } from 'lucide-react';
 
 export const revalidate = 60;
 
@@ -20,23 +20,8 @@ async function getLatestNews() {
   }
 }
 
-async function getTournaments() {
-  try {
-    const supabase = createServerClient();
-    const { data } = await supabase
-      .from('tournaments')
-      .select('*')
-      .in('status', ['upcoming', 'ongoing'])
-      .order('start_date', { ascending: true })
-      .limit(4);
-    return data || [];
-  } catch {
-    return [];
-  }
-}
-
 export default async function HomePage() {
-  const [news, tournaments] = await Promise.all([getLatestNews(), getTournaments()]);
+  const news = await getLatestNews();
 
   return (
     <div>
@@ -138,95 +123,6 @@ export default async function HomePage() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* Current & Upcoming Tournaments */}
-      <section className="bg-slate-50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="section-title flex items-center gap-2">
-              <Calendar className="w-7 h-7 text-turquoise-600" />
-              تورنمنت‌های جاری و آینده
-            </h2>
-            <Link href="/tournaments" className="text-turquoise-600 hover:text-turquoise-700 text-sm font-medium flex items-center gap-1">
-              مشاهده همه
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {tournaments.length === 0 ? (
-            <div className="card p-12 text-center">
-              <Trophy className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 text-lg">تورنمنتی در حال حاضر وجود ندارد</p>
-              <p className="text-slate-400 text-sm mt-2">تورنمنت‌ها از پنل مدیریت اضافه می‌شوند</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {tournaments.map((t) => (
-                <Link
-                  key={t.id}
-                  href={`/tournaments/${t.id}`}
-                  className="card p-6 group hover:-translate-y-1 flex gap-5"
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-turquoise-500 to-navy-600 flex items-center justify-center flex-shrink-0 shadow-soft">
-                    <Trophy className="w-8 h-8 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        t.status === 'ongoing' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-blue-100 text-blue-700'
-                      }`}>
-                        {t.status === 'ongoing' ? 'در حال برگزاری' : 'آینده'}
-                      </span>
-                      {t.registration_open && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">
-                          ثبت‌نام باز
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-bold text-navy-800 group-hover:text-turquoise-700 transition-colors truncate">
-                      {t.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 mt-1">
-                      {formatDate(t.start_date)}
-                      {t.location && ` • ${t.location}`}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="bg-gradient-to-l from-turquoise-600 to-navy-700 rounded-3xl p-8 md:p-12 text-white text-center shadow-soft-lg">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">به خانواده شطرنج نیشابور بپیوندید</h2>
-          <p className="text-turquoise-100 mb-8 max-w-xl mx-auto">
-            برای اطلاع از آخرین اخبار، تورنمنت‌ها و فعالیت‌های هیأت، ما را در شبکه‌های اجتماعی دنبال کنید.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="https://www.instagram.com/chessneyshabur.official"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-gold"
-            >
-              اینستاگرام
-            </a>
-            <a
-              href="https://t.me/Chesskhayyam"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/20 hover:bg-white/30 text-white font-medium py-2.5 px-6 rounded-xl transition-all"
-            >
-              تلگرام
-            </a>
-          </div>
-        </div>
       </section>
     </div>
   );
