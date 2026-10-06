@@ -78,7 +78,7 @@ export default function AdminPlayersPage() {
         bio: form.bio || null,
         achievements: form.achievements || null,
         sort_order: maxOrder + 1,
-      });
+      } as never);
     }
     setSaving(false);
     setShowForm(false);
@@ -123,7 +123,7 @@ export default function AdminPlayersPage() {
     const updates = items.map((item, index) =>
       supabase
         .from('players')
-        .update({ sort_order: index, updated_at: new Date().toISOString() })
+        .update({ sort_order: index, updated_at: new Date().toISOString() } as never)
         .eq('id', item.id)
     );
     await Promise.all(updates);
