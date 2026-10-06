@@ -25,14 +25,14 @@ export default async function PlayersPage() {
     <div className="container mx-auto px-4 py-12">
       <h1 className="section-title flex items-center gap-2 mb-10">
         <Users className="w-8 h-8 text-turquoise-600" />
-        بازیکنان
+        بازیکنان و مربیان
       </h1>
 
       {players.length === 0 ? (
         <div className="card p-16 text-center">
           <Users className="w-20 h-20 text-slate-300 mx-auto mb-4" />
           <p className="text-slate-500 text-xl">هنوز بازیکنی ثبت نشده است</p>
-          <p className="text-slate-400 mt-2">بازیکنان از پنل مدیریت اضافه می‌شوند</p>
+        
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
