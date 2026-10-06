@@ -26,7 +26,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/players" className="text-slate-300 hover:text-turquoise-300 transition-colors">
-                  بازیکنان
+                  بازیکنان و مربیان
                 </Link>
               </li>
               <li>
