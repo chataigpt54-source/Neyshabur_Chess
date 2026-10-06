@@ -21,6 +21,10 @@ export default async function AboutPage() {
 
 این هیأت با هدف توسعه و ترویج ورزش فکری شطرنج، برگزاری مسابقات منظم (از جمله جام قهرمانان شطرنج نیشابور)، آموزش و شناسایی استعدادهای جوان فعالیت می‌کند.`;
 
+  // آدرس عکس با encoding درست
+  const presidentImage =
+    'https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/Player%2CArbiter%2CCoach/file_000000007f7882309dc226f2f157a083.jpg';
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="section-title flex items-center gap-2 mb-10">
@@ -32,7 +36,7 @@ export default async function AboutPage() {
       <div className="card overflow-hidden mb-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/Player,Arbiter,Coach/file_000000007f7882309dc226f2f157a083.jpg"
+          src={presidentImage}
           alt="مهدی بوژمهرانی - رئیس هیأت شطرنج شهرستان نیشابور"
           className="w-full h-auto object-cover"
         />
