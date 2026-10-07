@@ -54,18 +54,6 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      <div className="card p-5 flex gap-4 items-start mb-6">
-        <div className="w-12 h-12 rounded-xl bg-turquoise-100 flex items-center justify-center flex-shrink-0">
-          <MapPin className="w-6 h-6 text-turquoise-700" />
-        </div>
-        <div>
-          <h3 className="font-bold text-navy-800 mb-1">نشانی هیأت</h3>
-          <p className="text-slate-600 text-sm leading-relaxed">
-            خراسان رضوی، نیشابور، خیابان فلسطین، درب ورودی هیأت فوتبال، طبقه دوم
-          </p>
-        </div>
-      </div>
-
       {/* دکمه‌های دانلود تاریخچه */}
       <div className="card p-6 space-y-4">
         <h3 className="font-bold text-navy-800 mb-2 flex items-center gap-2">
