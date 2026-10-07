@@ -152,7 +152,10 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
             <Trophy className="w-6 h-6 text-gold-500" />
             ثبت‌نام در تورنمنت
           </h2>
-          <RegistrationForm tournamentId={tournament.id} />
+          <RegistrationForm
+            tournamentId={tournament.id}
+            tournamentTitle={tournament.title}
+          />
         </div>
       )}
     </div>
