@@ -1,7 +1,7 @@
 // components/GallerySlider.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface GalleryItem {
@@ -12,6 +12,17 @@ interface GalleryItem {
 
 export default function GallerySlider({ items }: { items: GalleryItem[] }) {
   const [current, setCurrent] = useState(0);
+
+  // اتوپلی هر ۳ ثانیه
+  useEffect(() => {
+    if (items.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrent((c) => (c === items.length - 1 ? 0 : c + 1));
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [items.length]);
 
   if (items.length === 0) return null;
 
@@ -30,7 +41,7 @@ export default function GallerySlider({ items }: { items: GalleryItem[] }) {
         />
       </div>
 
-      {/* دکمه‌های ناوبری - فقط وقتی بیش از یک تصویر باشه */}
+      {/* دکمه‌های ناوبری */}
       {items.length > 1 && (
         <>
           <button
