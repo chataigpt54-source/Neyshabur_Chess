@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
-import { formatDate, truncate } from '@/lib/utils';
 import { Newspaper, Trophy, ArrowLeft, Users } from 'lucide-react';
+import NewsSlider from '@/components/NewsSlider';
 
 export const revalidate = 60;
 
@@ -13,7 +13,7 @@ async function getLatestNews() {
       .select('*')
       .eq('published', true)
       .order('published_at', { ascending: false })
-      .limit(3);
+      .limit(10);
     return data || [];
   } catch {
     return [];
@@ -35,12 +35,10 @@ export default async function HomePage() {
                 <Trophy className="w-4 h-4" />
                 <span>وب‌سایت رسمی هیأت شطرنج</span>
               </div>
-
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 animate-slide-up">
                 هیأت شطرنج
                 <span className="block text-turquoise-300 mt-2">شهرستان نیشابور</span>
               </h1>
-
               <p
                 className="text-lg md:text-xl text-slate-300 mb-10 max-w-xl leading-relaxed animate-slide-up mx-auto lg:mx-0"
                 style={{ animationDelay: '0.1s' }}
@@ -48,7 +46,6 @@ export default async function HomePage() {
                 مرکز توسعه، آموزش و برگزاری مسابقات شطرنج در نیشابور.
                 همراه ما باشید تا استعدادهای شطرنجی شهرستان را شکوفا کنیم.
               </p>
-
               <div
                 className="flex flex-wrap gap-4 justify-center lg:justify-start animate-slide-up"
                 style={{ animationDelay: '0.2s' }}
@@ -95,7 +92,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Latest News */}
+      {/* Latest News - Slider */}
       <section className="container mx-auto px-4 py-16">
         <div className="flex items-center justify-between mb-8">
           <h2 className="section-title flex items-center gap-2">
@@ -118,39 +115,7 @@ export default async function HomePage() {
             <p className="text-slate-400 text-sm mt-2">اخبار از طریق پنل مدیریت اضافه خواهند شد</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {news.map((item) => (
-              <Link
-                key={item.id}
-                href={`/news/${item.slug}`}
-                className="card group hover:-translate-y-1"
-              >
-                {item.image_url ? (
-                  <div className="aspect-video relative overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={item.image_url}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video bg-gradient-to-br from-turquoise-100 to-navy-100 flex items-center justify-center">
-                    <Newspaper className="w-12 h-12 text-turquoise-400" />
-                  </div>
-                )}
-                <div className="p-5">
-                  <time className="text-xs text-slate-400">{formatDate(item.published_at)}</time>
-                  <h3 className="font-bold text-navy-800 mt-2 group-hover:text-turquoise-700 transition-colors line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-2 line-clamp-2">
-                    {truncate(item.content, 100)}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <NewsSlider items={news} />
         )}
       </section>
     </div>
