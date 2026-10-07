@@ -85,6 +85,7 @@ export interface Database {
           status: 'upcoming' | 'ongoing' | 'past';
           registration_open: boolean;
           image_url: string | null;
+          image_url_2: string | null;        // ← اضافه شد
           location: string | null;
           max_participants: number | null;
           created_at: string;
@@ -99,6 +100,7 @@ export interface Database {
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
           image_url?: string | null;
+          image_url_2?: string | null;       // ← اضافه شد
           location?: string | null;
           max_participants?: number | null;
           created_at?: string;
@@ -113,6 +115,7 @@ export interface Database {
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
           image_url?: string | null;
+          image_url_2?: string | null;       // ← اضافه شد
           location?: string | null;
           max_participants?: number | null;
           created_at?: string;
