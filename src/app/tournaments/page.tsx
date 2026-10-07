@@ -43,45 +43,82 @@ export default async function TournamentsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {tournaments.map((t) => (
-            <Link
-              key={t.id}
-              href={`/tournaments/${t.id}`}
-              className="card p-5 md:p-6 flex flex-col md:flex-row gap-4 md:items-center hover:-translate-y-0.5 group"
-            >
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-turquoise-500 to-navy-600 flex items-center justify-center flex-shrink-0">
-                <Trophy className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${statusMap[t.status].class}`}>
-                    {statusMap[t.status].label}
-                  </span>
-                  {t.registration_open && t.status !== 'past' && (
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">
-                      ثبت‌نام باز است
-                    </span>
+          {tournaments.map((t) => {
+            const hasImages = t.image_url || t.image_url_2;
+
+            return (
+              <Link
+                key={t.id}
+                href={`/tournaments/${t.id}`}
+                className="card p-5 md:p-6 flex flex-col gap-4 hover:-translate-y-0.5 group"
+              >
+                {/* دو عکس زیر هم */}
+                {hasImages && (
+                  <div className="space-y-3">
+                    {t.image_url && (
+                      <img
+                        src={t.image_url}
+                        alt={t.title}
+                        className="w-full h-48 md:h-56 object-cover rounded-xl"
+                      />
+                    )}
+                    {t.image_url_2 && (
+                      <img
+                        src={t.image_url_2}
+                        alt={t.title}
+                        className="w-full h-48 md:h-56 object-cover rounded-xl"
+                      />
+                    )}
+                  </div>
+                )}
+
+                <div className="flex flex-col md:flex-row gap-4 md:items-center">
+                  {!hasImages && (
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-turquoise-500 to-navy-600 flex items-center justify-center flex-shrink-0">
+                      <Trophy className="w-7 h-7 text-white" />
+                    </div>
                   )}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                          statusMap[t.status]?.class || statusMap.past.class
+                        }`}
+                      >
+                        {statusMap[t.status]?.label || 'گذشته'}
+                      </span>
+                      {t.registration_open && t.status !== 'past' && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">
+                          ثبت‌نام باز است
+                        </span>
+                      )}
+                    </div>
+
+                    <h2 className="font-bold text-navy-800 group-hover:text-turquoise-700 transition-colors text-lg">
+                      {t.title}
+                    </h2>
+
+                    <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(t.start_date)}
+                        {t.end_date &&
+                          t.end_date !== t.start_date &&
+                          ` تا ${formatDate(t.end_date)}`}
+                      </span>
+                      {t.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {t.location}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <h2 className="font-bold text-navy-800 group-hover:text-turquoise-700 transition-colors text-lg">
-                  {t.title}
-                </h2>
-                <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {formatDate(t.start_date)}
-                    {t.end_date && t.end_date !== t.start_date && ` تا ${formatDate(t.end_date)}`}
-                  </span>
-                  {t.location && (
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
-                      {t.location}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
