@@ -14,6 +14,7 @@ type Tournament = {
   status: 'upcoming' | 'ongoing' | 'past';
   registration_open: boolean;
   image_url?: string | null;
+  image_url_2?: string | null;
   location?: string | null;
   max_participants?: number | null;
   updated_at?: string;
@@ -37,6 +38,7 @@ type FormState = {
   status: 'upcoming' | 'ongoing' | 'past';
   registration_open: boolean;
   image_url: string;
+  image_url_2: string;
   location: string;
   max_participants: string;
 };
@@ -49,6 +51,7 @@ const emptyForm: FormState = {
   status: 'upcoming',
   registration_open: true,
   image_url: '',
+  image_url_2: '',
   location: '',
   max_participants: '',
 };
@@ -103,6 +106,7 @@ export default function AdminTournamentsPage() {
       status: tournament.status ?? 'upcoming',
       registration_open: tournament.registration_open ?? true,
       image_url: tournament.image_url ?? '',
+      image_url_2: tournament.image_url_2 ?? '',
       location: tournament.location ?? '',
       max_participants:
         tournament.max_participants !== null &&
@@ -139,6 +143,7 @@ export default function AdminTournamentsPage() {
       status: form.status,
       registration_open: form.registration_open,
       image_url: form.image_url.trim() || null,
+      image_url_2: form.image_url_2.trim() || null,
       location: form.location.trim() || null,
       max_participants:
         parsedMaxParticipants !== null &&
@@ -154,7 +159,8 @@ export default function AdminTournamentsPage() {
           .from('tournaments')
           .update(payload)
           .eq('id', editing.id);
-if (error) {
+
+        if (error) {
           console.error(error);
           alert('خطا در ویرایش تورنمنت.');
           return;
@@ -311,7 +317,8 @@ if (error) {
               />
             </div>
           </div>
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <select
               className="input-field w-full"
               value={form.status}
@@ -340,18 +347,44 @@ if (error) {
             />
           </div>
 
-          <input
-            className="input-field w-full"
-            placeholder="آدرس تصویر"
-            value={form.image_url}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                image_url: e.target.value,
-              }))
-            }
-            dir="ltr"
-          />
+          {/* دو عکس زیر هم */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm text-slate-500 block mb-1">
+                آدرس تصویر اول
+              </label>
+              <input
+                className="input-field w-full"
+                placeholder="آدرس تصویر اول"
+                value={form.image_url}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    image_url: e.target.value,
+                  }))
+                }
+                dir="ltr"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm text-slate-500 block mb-1">
+                آدرس تصویر دوم
+              </label>
+              <input
+                className="input-field w-full"
+                placeholder="آدرس تصویر دوم"
+                value={form.image_url_2}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    image_url_2: e.target.value,
+                  }))
+                }
+                dir="ltr"
+              />
+            </div>
+          </div>
 
           <input
             type="number"
@@ -449,7 +482,7 @@ if (error) {
                   <p className="font-medium">
                     {registration.full_name}
                   </p>
-<p className="text-slate-500 mt-1">
+                  <p className="text-slate-500 mt-1">
                     {registration.phone}
 
                     {registration.email && (
