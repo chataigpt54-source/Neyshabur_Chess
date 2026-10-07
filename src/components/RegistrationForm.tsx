@@ -7,8 +7,8 @@ type Props = {
   tournamentTitle: string;
 };
 
-/** شناسه فرم Tally را اینجا بگذار (از Share → Embed) */
-const TALLY_FORM_ID = 'XXXXXX'; // ← مثلا mRoDv3
+/** شناسه فرم Tally */
+const TALLY_FORM_ID = 'Zjpy2z';
 
 declare global {
   interface Window {
