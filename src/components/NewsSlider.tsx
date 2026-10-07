@@ -12,7 +12,7 @@ interface NewsItem {
   title: string;
   content: string;
   image_url?: string | null;
-  published_at: string;
+  published_at: string | null;
 }
 
 export default function NewsSlider({ items }: { items: NewsItem[] }) {
@@ -31,8 +31,13 @@ export default function NewsSlider({ items }: { items: NewsItem[] }) {
 
   if (items.length === 0) return null;
 
-  const prev = () => setCurrent((c) => (c === 0 ? items.length - 1 : c - 1));
-  const next = () => setCurrent((c) => (c === items.length - 1 ? 0 : c + 1));
+  const prev = () => {
+    setCurrent((c) => (c === 0 ? items.length - 1 : c - 1));
+  };
+
+  const next = () => {
+    setCurrent((c) => (c === items.length - 1 ? 0 : c + 1));
+  };
 
   const item = items[current];
 
@@ -56,9 +61,18 @@ export default function NewsSlider({ items }: { items: NewsItem[] }) {
             <Newspaper className="w-12 h-12 text-turquoise-400" />
           </div>
         )}
+
         <div className="p-5">
-          <time className="text-xs text-slate-400">{formatDate(item.published_at)}</time>
-          <h3 className="font-bold text-navy-800 mt-2 line-clamp-2">{item.title}</h3>
+          <time className="text-xs text-slate-400">
+            {item.published_at
+              ? formatDate(item.published_at)
+              : 'تاریخ نامشخص'}
+          </time>
+
+          <h3 className="font-bold text-navy-800 mt-2 line-clamp-2">
+            {item.title}
+          </h3>
+
           <p className="text-sm text-slate-500 mt-2 line-clamp-2">
             {truncate(item.content, 100)}
           </p>
@@ -72,13 +86,16 @@ export default function NewsSlider({ items }: { items: NewsItem[] }) {
             onClick={prev}
             className="absolute left-3 top-[30%] -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
             aria-label="قبلی"
+            type="button"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
+
           <button
             onClick={next}
             className="absolute right-3 top-[30%] -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
             aria-label="بعدی"
+            type="button"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -90,9 +107,12 @@ export default function NewsSlider({ items }: { items: NewsItem[] }) {
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  i === current ? 'bg-turquoise-500 w-4' : 'bg-slate-300'
+                  i === current
+                    ? 'bg-turquoise-500 w-4'
+                    : 'bg-slate-300'
                 }`}
                 aria-label={`خبر ${i + 1}`}
+                type="button"
               />
             ))}
           </div>
