@@ -8,6 +8,7 @@ export const revalidate = 60;
 async function getLatestNews() {
   try {
     const supabase = createServerClient();
+
     const { data } = await supabase
       .from('news')
       .select('*')
@@ -133,9 +134,11 @@ export default async function HomePage() {
         {news.length === 0 ? (
           <div className="card p-12 text-center">
             <Newspaper className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+
             <p className="text-slate-500 text-lg">
               هنوز خبری منتشر نشده است
             </p>
+
             <p className="text-slate-400 text-sm mt-2">
               اخبار از طریق پنل مدیریت اضافه خواهند شد
             </p>
@@ -147,4 +150,3 @@ export default async function HomePage() {
     </div>
   );
 }
-```
