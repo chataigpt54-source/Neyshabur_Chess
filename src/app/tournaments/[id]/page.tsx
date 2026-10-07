@@ -55,6 +55,8 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
   const tournament = await getTournament(params.id);
   if (!tournament) notFound();
 
+  const hasImages = tournament.image_url || tournament.image_url_2;
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <Link
@@ -66,24 +68,41 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
       </Link>
 
       <div className="card overflow-hidden mb-8">
-        {tournament.image_url && (
-          <div className="aspect-[21/9] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={tournament.image_url}
-              alt={tournament.title}
-              className="w-full h-full object-cover"
-            />
+        {/* دو عکس زیر هم */}
+        {hasImages && (
+          <div className="space-y-0">
+            {tournament.image_url && (
+              <div className="aspect-[21/9] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={tournament.image_url}
+                  alt={tournament.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            {tournament.image_url_2 && (
+              <div className="aspect-[21/9] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={tournament.image_url_2}
+                  alt={tournament.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
           </div>
         )}
+
         <div className="p-6 md:p-8">
           <div className="flex flex-wrap gap-2 mb-4">
             <span
               className={`text-sm px-3 py-1 rounded-full font-medium ${
-                statusMap[tournament.status as keyof typeof statusMap].class
+                statusMap[tournament.status as keyof typeof statusMap]?.class ||
+                statusMap.past.class
               }`}
             >
-              {statusMap[tournament.status as keyof typeof statusMap].label}
+              {statusMap[tournament.status as keyof typeof statusMap]?.label || 'گذشته'}
             </span>
             {tournament.registration_open && tournament.status !== 'past' && (
               <span className="text-sm px-3 py-1 rounded-full bg-gold-100 text-gold-700 font-medium">
