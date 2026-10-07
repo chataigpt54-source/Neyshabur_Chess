@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
-import { Info, MapPin } from 'lucide-react';
+import { Info, MapPin, Download, FileText, Presentation } from 'lucide-react';
 
 export const metadata = { title: 'درباره ما' };
 export const revalidate = 60;
@@ -25,6 +25,12 @@ export default async function AboutPage() {
   const presidentImage =
     'https://zhfpozztqtscfvxisjfg.supabase.co/storage/v1/object/public/images/Player%2CArbiter%2CCoach/file_000000007f7882309dc226f2f157a083.jpg';
 
+  // لینک‌های دانلود تاریخچه
+  const pdfUrl =
+    'https://rykupd7voq6bakre.public.blob.vercel-storage.com/%D8%AA%D8%A7%D8%B1%DB%8C%D8%AE%DA%86%D9%87%20%D9%87%DB%8C%D8%A3%D8%AA%20%D8%B4%D8%B7%D8%B1%D9%86%D8%AC%20%D8%B4%D9%87%D8%B1%D8%B3%D8%AA%D8%A7%D9%86%20%D9%86%DB%8C%D8%B4%D8%A7%D8%A8%D9%88%D8%B1.pdf';
+  const pptxUrl =
+    'https://rykupd7voq6bakre.public.blob.vercel-storage.com/%D8%AA%D8%A7%D8%B1%DB%8C%D8%AE%DA%86%D9%87%20%D9%87%DB%8C%D8%A3%D8%AA%20%D8%B4%D8%B7%D8%B1%D9%86%D8%AC%20%D8%B4%D9%87%D8%B1%D8%B3%D8%AA%D8%A7%D9%86%20%D9%86%DB%8C%D8%B4%D8%A7%D8%A8%D9%88%D8%B1.pptx';
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <h1 className="section-title flex items-center gap-2 mb-10">
@@ -48,7 +54,7 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      <div className="card p-5 flex gap-4 items-start">
+      <div className="card p-5 flex gap-4 items-start mb-6">
         <div className="w-12 h-12 rounded-xl bg-turquoise-100 flex items-center justify-center flex-shrink-0">
           <MapPin className="w-6 h-6 text-turquoise-700" />
         </div>
@@ -58,6 +64,42 @@ export default async function AboutPage() {
             خراسان رضوی، نیشابور، خیابان فلسطین، درب ورودی هیأت فوتبال، طبقه دوم
           </p>
         </div>
+      </div>
+
+      {/* دکمه‌های دانلود تاریخچه */}
+      <div className="card p-6 space-y-4">
+        <h3 className="font-bold text-navy-800 mb-2 flex items-center gap-2">
+          <Download className="w-5 h-5 text-turquoise-600" />
+          دانلود تاریخچه هیأت شطرنج شهرستان نیشابور
+        </h3>
+
+        <a
+          href={pptxUrl}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between gap-3 w-full px-5 py-4 rounded-xl bg-gradient-to-l from-turquoise-600 to-turquoise-500 text-white font-medium shadow-md hover:shadow-lg hover:from-turquoise-700 hover:to-turquoise-600 transition-all duration-200"
+        >
+          <span className="flex items-center gap-3">
+            <Presentation className="w-6 h-6 flex-shrink-0" />
+            دانلود به صورت PowerPoint
+          </span>
+          <Download className="w-5 h-5 opacity-80" />
+        </a>
+
+        <a
+          href={pdfUrl}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between gap-3 w-full px-5 py-4 rounded-xl bg-gradient-to-l from-navy-700 to-navy-600 text-white font-medium shadow-md hover:shadow-lg hover:from-navy-800 hover:to-navy-700 transition-all duration-200"
+        >
+          <span className="flex items-center gap-3">
+            <FileText className="w-6 h-6 flex-shrink-0" />
+            دانلود به صورت PDF
+          </span>
+          <Download className="w-5 h-5 opacity-80" />
+        </a>
       </div>
     </div>
   );
