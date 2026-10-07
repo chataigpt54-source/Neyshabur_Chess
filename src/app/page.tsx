@@ -1,4 +1,3 @@
-```tsx
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { Newspaper, Trophy, ArrowLeft, Users } from 'lucide-react';
