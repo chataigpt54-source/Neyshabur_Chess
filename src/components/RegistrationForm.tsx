@@ -30,7 +30,7 @@ export default function RegistrationForm({
       tournament_title: tournamentTitle,
     });
 
-    return `https://tally.so/embed/\( {TALLY_FORM_ID}? \){params.toString()}`;
+    return 'https://tally.so/embed/' + TALLY_FORM_ID + '?' + params.toString();
   }, [tournamentId, tournamentTitle]);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function RegistrationForm({
         frameBorder={0}
         marginHeight={0}
         marginWidth={0}
-        title={`ثبت‌نام ${tournamentTitle}`}
+        title={'ثبت‌نام ' + tournamentTitle}
         className="w-full rounded-xl border-0 min-h-[520px]"
       />
     </div>
