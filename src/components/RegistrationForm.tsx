@@ -26,7 +26,6 @@ export default function RegistrationForm({
       hideTitle: '1',
       transparentBackground: '1',
       dynamicHeight: '1',
-      // Hidden fields — نام‌ها باید دقیقاً مثل Tally باشند
       tournament_id: tournamentId,
       tournament_title: tournamentTitle,
     });
@@ -64,7 +63,8 @@ export default function RegistrationForm({
   return (
     <div className="w-full" dir="rtl">
       <p className="text-sm text-slate-500 mb-4">
-        ثبت‌نام برای: <span className="font-bold text-navy-800">{tournamentTitle}</span>
+        ثبت‌نام برای:{' '}
+        <span className="font-bold text-navy-800">{tournamentTitle}</span>
       </p>
 
       <iframe
