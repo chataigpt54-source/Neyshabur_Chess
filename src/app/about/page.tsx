@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
-import { Info, MapPin, Download, FileText, Presentation } from 'lucide-react';
+import { Info, Download, FileText, Presentation } from 'lucide-react';
 
 export const metadata = { title: 'درباره ما' };
 export const revalidate = 60;
