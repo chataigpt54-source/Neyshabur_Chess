@@ -32,6 +32,8 @@ type Tournament = {
   image_url_2?: string | null;
   location?: string | null;
   max_participants?: number | null;
+  referee_enabled?: boolean;
+  referee_file_url?: string | null;
   results?: ResultItem[] | null;
   updated_at?: string;
 };
@@ -57,6 +59,8 @@ type FormState = {
   image_url_2: string;
   location: string;
   max_participants: string;
+  referee_enabled: boolean;
+  referee_file_url: string;
   results: ResultItem[];
 };
 
@@ -71,6 +75,8 @@ const emptyForm: FormState = {
   image_url_2: '',
   location: '',
   max_participants: '',
+  referee_enabled: false,
+  referee_file_url: '',
   results: [],
 };
 
@@ -88,6 +94,7 @@ export default function AdminTournamentsPage() {
   const [editing, setEditing] = useState<Tournament | null>(null);
   const [form, setForm] = useState<FormState>({ ...emptyForm });
   const [saving, setSaving] = useState(false);
+
   const [regs, setRegs] = useState<Registration[]>([]);
   const [viewRegsId, setViewRegsId] = useState<string | null>(null);
   const [loadingRegs, setLoadingRegs] = useState(false);
@@ -138,6 +145,8 @@ export default function AdminTournamentsPage() {
         tournament.max_participants !== undefined
           ? String(tournament.max_participants)
           : '',
+      referee_enabled: tournament.referee_enabled ?? false,
+      referee_file_url: tournament.referee_file_url ?? '',
       results: Array.isArray(tournament.results)
         ? tournament.results
         : [],
@@ -191,6 +200,11 @@ export default function AdminTournamentsPage() {
       return;
     }
 
+    if (form.referee_enabled && !form.referee_file_url.trim()) {
+      alert('برای فعال کردن پنل داور، لینک فایل Excel را وارد کنید.');
+      return;
+    }
+
     setSaving(true);
 
     const parsedMaxParticipants = form.max_participants.trim()
@@ -227,6 +241,8 @@ export default function AdminTournamentsPage() {
         !Number.isNaN(parsedMaxParticipants)
           ? parsedMaxParticipants
           : null,
+      referee_enabled: form.referee_enabled,
+      referee_file_url: form.referee_file_url.trim() || null,
       results: cleanedResults,
       updated_at: new Date().toISOString(),
     };
@@ -495,6 +511,53 @@ export default function AdminTournamentsPage() {
             <span>ثبت‌نام باز باشد</span>
           </label>
 
+          {/* پنل داور */}
+          <div className="border border-turquoise-200 bg-turquoise-50/40 rounded-xl p-4 space-y-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.referee_enabled}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    referee_enabled: e.target.checked,
+                  }))
+                }
+              />
+
+              <span className="font-medium text-navy-800">
+                فعال برای پنل داور
+              </span>
+            </label>
+
+            {form.referee_enabled && (
+              <div>
+                <label className="text-sm text-slate-600 block mb-1">
+                  لینک فایل Excel شرکت‌کنندگان
+                </label>
+
+                <input
+                  className="input-field w-full"
+                  placeholder="https://..."
+                  value={form.referee_file_url}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      referee_file_url: e.target.value,
+                    }))
+                  }
+                  dir="ltr"
+                />
+
+                <p className="text-xs text-slate-400 mt-2">
+                  این فایل در پنل داور برای مشاهده و دانلود شرکت‌کنندگان
+                  نمایش داده می‌شود.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* نتایج */}
           <div className="border border-slate-200 rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-navy-800 flex items-center gap-2">
@@ -623,6 +686,7 @@ export default function AdminTournamentsPage() {
         </div>
       )}
 
+      {/* ثبت‌نام‌ها */}
       {viewRegsId && (
         <div className="card p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
@@ -682,6 +746,7 @@ export default function AdminTournamentsPage() {
         </div>
       )}
 
+      {/* لیست تورنمنت‌ها */}
       {loading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-turquoise-600" />
@@ -716,6 +781,12 @@ export default function AdminTournamentsPage() {
                         • {tournament.results.length} دوره نتیجه
                       </span>
                     )}
+
+                  {tournament.referee_enabled && (
+                    <span className="mr-2 text-turquoise-600">
+                      • فعال برای داور
+                    </span>
+                  )}
                 </p>
               </div>
 
