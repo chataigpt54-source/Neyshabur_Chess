@@ -86,6 +86,11 @@ export interface Database {
           end_date: string | null;
           status: 'upcoming' | 'ongoing' | 'past';
           registration_open: boolean;
+
+          // Referee panel
+          referee_enabled: boolean;
+          referee_file_url: string | null;
+
           image_url: string | null;
           image_url_2: string | null;
           location: string | null;
@@ -103,6 +108,11 @@ export interface Database {
           end_date?: string | null;
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
+
+          // Referee panel
+          referee_enabled?: boolean;
+          referee_file_url?: string | null;
+
           image_url?: string | null;
           image_url_2?: string | null;
           location?: string | null;
@@ -120,6 +130,11 @@ export interface Database {
           end_date?: string | null;
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
+
+          // Referee panel
+          referee_enabled?: boolean;
+          referee_file_url?: string | null;
+
           image_url?: string | null;
           image_url_2?: string | null;
           location?: string | null;
@@ -163,6 +178,7 @@ export interface Database {
           full_name?: string;
           phone?: string;
           email?: string | null;
+          national_id?: string | null;
           national_id?: string | null;
           notes?: string | null;
           status?: 'pending' | 'approved' | 'rejected';
