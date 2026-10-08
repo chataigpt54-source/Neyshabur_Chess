@@ -59,14 +59,14 @@ export default async function TournamentsPage() {
                       <img
                         src={t.image_url}
                         alt={t.title}
-                        className="w-full h-48 md:h-56 object-cover rounded-xl"
+                        className="w-full h-auto max-h-72 object-contain rounded-xl bg-slate-50"
                       />
                     )}
                     {t.image_url_2 && (
                       <img
                         src={t.image_url_2}
                         alt={t.title}
-                        className="w-full h-48 md:h-56 object-cover rounded-xl"
+                        className="w-full h-auto max-h-72 object-contain rounded-xl bg-slate-50"
                       />
                     )}
                   </div>
