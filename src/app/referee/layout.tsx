@@ -1,16 +1,9 @@
-import { isRefereeAuthenticated } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { ReactNode } from 'react';
 
-export default async function RefereeLayout({
+export default function RefereeLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const isAuth = await isRefereeAuthenticated();
-
-  return (
-    <div dir="rtl">
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }
