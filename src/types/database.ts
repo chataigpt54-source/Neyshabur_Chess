@@ -179,7 +179,6 @@ export interface Database {
           phone?: string;
           email?: string | null;
           national_id?: string | null;
-          national_id?: string | null;
           notes?: string | null;
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
