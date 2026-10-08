@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Pencil, Trash2, Loader2, Users, Medal, X } from 'lucide-react';
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  Users,
+  Medal,
+  X,
+} from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 type ResultItem = {
@@ -86,16 +94,19 @@ export default function AdminTournamentsPage() {
 
   const load = async () => {
     setLoading(true);
+
     const { data, error } = await supabase
       .from('tournaments')
       .select('*')
       .order('start_date', { ascending: false });
+
     if (error) {
       console.error('Error loading tournaments:', error);
       setItems([]);
     } else {
       setItems((data ?? []) as Tournament[]);
     }
+
     setLoading(false);
   };
 
@@ -111,6 +122,7 @@ export default function AdminTournamentsPage() {
 
   const openEdit = (tournament: Tournament) => {
     setEditing(tournament);
+
     setForm({
       title: tournament.title ?? '',
       description: tournament.description ?? '',
@@ -126,8 +138,11 @@ export default function AdminTournamentsPage() {
         tournament.max_participants !== undefined
           ? String(tournament.max_participants)
           : '',
-      results: Array.isArray(tournament.results) ? tournament.results : [],
+      results: Array.isArray(tournament.results)
+        ? tournament.results
+        : [],
     });
+
     setShowForm(true);
   };
 
@@ -145,8 +160,16 @@ export default function AdminTournamentsPage() {
   ) => {
     setForm((prev) => {
       const newResults = [...prev.results];
-      newResults[index] = { ...newResults[index], [field]: value };
-      return { ...prev, results: newResults };
+
+      newResults[index] = {
+        ...newResults[index],
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        results: newResults,
+      };
     });
   };
 
@@ -162,6 +185,7 @@ export default function AdminTournamentsPage() {
       alert('عنوان تورنمنت را وارد کنید.');
       return;
     }
+
     if (!form.start_date) {
       alert('تاریخ شروع را وارد کنید.');
       return;
@@ -173,8 +197,7 @@ export default function AdminTournamentsPage() {
       ? Number.parseInt(form.max_participants, 10)
       : null;
 
-    // فقط دوره‌هایی که حداقل یک نام دارند ذخیره می‌شوند
-    const cleanedResults = form.results
+    const cleanedResults: ResultItem[] = form.results
       .filter(
         (r) =>
           r.first.trim() ||
@@ -204,7 +227,7 @@ export default function AdminTournamentsPage() {
         !Number.isNaN(parsedMaxParticipants)
           ? parsedMaxParticipants
           : null,
-      results: cleanedResults.length > 0 ? cleanedResults : null,
+      results: cleanedResults,
       updated_at: new Date().toISOString(),
     };
 
@@ -214,6 +237,7 @@ export default function AdminTournamentsPage() {
           .from('tournaments')
           .update(payload)
           .eq('id', editing.id);
+
         if (error) {
           console.error(error);
           alert('خطا در ویرایش تورنمنت.');
@@ -223,6 +247,7 @@ export default function AdminTournamentsPage() {
         const { error } = await supabase
           .from('tournaments')
           .insert(payload);
+
         if (error) {
           console.error(error);
           alert('خطا در ایجاد تورنمنت.');
@@ -233,6 +258,7 @@ export default function AdminTournamentsPage() {
       setShowForm(false);
       setEditing(null);
       setForm({ ...emptyForm });
+
       await load();
     } finally {
       setSaving(false);
@@ -243,6 +269,7 @@ export default function AdminTournamentsPage() {
     const confirmed = window.confirm(
       'آیا از حذف این تورنمنت مطمئن هستید؟'
     );
+
     if (!confirmed) return;
 
     const { error } = await supabase
@@ -291,6 +318,7 @@ export default function AdminTournamentsPage() {
         <h1 className="text-2xl font-bold text-navy-800">
           مدیریت تورنمنت‌ها
         </h1>
+
         <button
           onClick={openCreate}
           className="btn-primary flex items-center gap-2"
@@ -335,6 +363,7 @@ export default function AdminTournamentsPage() {
               <label className="text-sm text-slate-500 block mb-1">
                 تاریخ شروع
               </label>
+
               <input
                 type="date"
                 className="input-field w-full"
@@ -347,10 +376,12 @@ export default function AdminTournamentsPage() {
                 }
               />
             </div>
+
             <div>
               <label className="text-sm text-slate-500 block mb-1">
                 تاریخ پایان
               </label>
+
               <input
                 type="date"
                 className="input-field w-full"
@@ -394,12 +425,12 @@ export default function AdminTournamentsPage() {
             />
           </div>
 
-          {/* دو عکس زیر هم */}
           <div className="space-y-3">
             <div>
               <label className="text-sm text-slate-500 block mb-1">
                 آدرس تصویر اول
               </label>
+
               <input
                 className="input-field w-full"
                 placeholder="آدرس تصویر اول"
@@ -413,10 +444,12 @@ export default function AdminTournamentsPage() {
                 dir="ltr"
               />
             </div>
+
             <div>
               <label className="text-sm text-slate-500 block mb-1">
                 آدرس تصویر دوم
               </label>
+
               <input
                 className="input-field w-full"
                 placeholder="آدرس تصویر دوم"
@@ -458,16 +491,17 @@ export default function AdminTournamentsPage() {
                 }))
               }
             />
+
             <span>ثبت‌نام باز باشد</span>
           </label>
 
-          {/* بخش نفرات برتر */}
           <div className="border border-slate-200 rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-navy-800 flex items-center gap-2">
                 <Medal className="w-5 h-5 text-gold-500" />
                 نفرات برتر (اول، دوم، سوم)
               </h3>
+
               <button
                 type="button"
                 onClick={addResult}
@@ -512,6 +546,7 @@ export default function AdminTournamentsPage() {
                         <label className="text-xs text-gold-700 font-medium block mb-1">
                           🥇 نفر اول
                         </label>
+
                         <input
                           className="input-field w-full"
                           placeholder="نام نفر اول"
@@ -521,10 +556,12 @@ export default function AdminTournamentsPage() {
                           }
                         />
                       </div>
+
                       <div>
                         <label className="text-xs text-slate-600 font-medium block mb-1">
                           🥈 نفر دوم
                         </label>
+
                         <input
                           className="input-field w-full"
                           placeholder="نام نفر دوم"
@@ -534,10 +571,12 @@ export default function AdminTournamentsPage() {
                           }
                         />
                       </div>
+
                       <div>
                         <label className="text-xs text-orange-700 font-medium block mb-1">
                           🥉 نفر سوم
                         </label>
+
                         <input
                           className="input-field w-full"
                           placeholder="نام نفر سوم"
@@ -569,6 +608,7 @@ export default function AdminTournamentsPage() {
                 'ذخیره'
               )}
             </button>
+
             <button
               onClick={() => {
                 setShowForm(false);
@@ -590,6 +630,7 @@ export default function AdminTournamentsPage() {
               <Users className="w-5 h-5" />
               ثبت‌نام‌ها
             </h2>
+
             <button
               onClick={() => {
                 setViewRegsId(null);
@@ -619,8 +660,10 @@ export default function AdminTournamentsPage() {
                   <p className="font-medium">
                     {registration.full_name}
                   </p>
+
                   <p className="text-slate-500 mt-1">
                     {registration.phone}
+
                     {registration.email && (
                       <>
                         {' • '}
@@ -628,6 +671,7 @@ export default function AdminTournamentsPage() {
                       </>
                     )}
                   </p>
+
                   <span className="inline-block mt-2 text-xs bg-slate-200 px-2 py-0.5 rounded">
                     {registration.status}
                   </span>
@@ -657,6 +701,7 @@ export default function AdminTournamentsPage() {
                 <h3 className="font-medium text-navy-800">
                   {tournament.title}
                 </h3>
+
                 <p className="text-xs text-slate-400 mt-1">
                   {formatDate(tournament.start_date)} •{' '}
                   {tournament.status === 'upcoming'
@@ -664,6 +709,7 @@ export default function AdminTournamentsPage() {
                     : tournament.status === 'ongoing'
                       ? 'در حال برگزاری'
                       : 'گذشته'}
+
                   {Array.isArray(tournament.results) &&
                     tournament.results.length > 0 && (
                       <span className="mr-2 text-gold-600">
@@ -672,6 +718,7 @@ export default function AdminTournamentsPage() {
                     )}
                 </p>
               </div>
+
               <div className="flex gap-1">
                 <button
                   onClick={() => viewRegs(tournament.id)}
@@ -680,6 +727,7 @@ export default function AdminTournamentsPage() {
                 >
                   <Users className="w-4 h-4" />
                 </button>
+
                 <button
                   onClick={() => openEdit(tournament)}
                   className="p-2 rounded-lg hover:bg-slate-100"
@@ -687,6 +735,7 @@ export default function AdminTournamentsPage() {
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
+
                 <button
                   onClick={() => remove(tournament.id)}
                   className="p-2 rounded-lg hover:bg-red-50 text-red-500"
