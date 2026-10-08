@@ -5,6 +5,9 @@ import { createServerClient } from './supabase';
 const ADMIN_COOKIE = 'chess_admin_session';
 const SESSION_VALUE = 'authenticated_admin_neyshabur';
 
+const REFEREE_COOKIE = 'chess_referee_session';
+const REFEREE_SESSION_VALUE = 'authenticated_referee_neyshabur';
+
 type AdminRow = {
   password_hash: string;
 };
@@ -59,6 +62,44 @@ export async function isAdminAuthenticated(): Promise<boolean> {
 
 export async function requireAdmin() {
   const ok = await isAdminAuthenticated();
+  if (!ok) {
+    throw new Error('Unauthorized');
+  }
+  return true;
+}
+
+// ─── Referee Auth ───────────────────────────────────────────────
+
+export function verifyRefereeCredentials(username: string, password: string): boolean {
+  const refUser = process.env.REFEREE_USERNAME || 'Refree';
+  const refPass = process.env.REFEREE_PASSWORD || 'NeyshaburRefree123';
+  return username === refUser && password === refPass;
+}
+
+export async function createRefereeSession() {
+  const cookieStore = await cookies();
+  cookieStore.set(REFEREE_COOKIE, REFEREE_SESSION_VALUE, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
+  });
+}
+
+export async function destroyRefereeSession() {
+  const cookieStore = await cookies();
+  cookieStore.delete(REFEREE_COOKIE);
+}
+
+export async function isRefereeAuthenticated(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get(REFEREE_COOKIE);
+  return session?.value === REFEREE_SESSION_VALUE;
+}
+
+export async function requireReferee() {
+  const ok = await isRefereeAuthenticated();
   if (!ok) {
     throw new Error('Unauthorized');
   }
