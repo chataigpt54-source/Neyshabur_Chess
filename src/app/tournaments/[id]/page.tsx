@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
-import { ArrowRight, Trophy, Calendar, MapPin, Users } from 'lucide-react';
+import { ArrowRight, Trophy, Calendar, MapPin, Users, Medal } from 'lucide-react';
 import RegistrationForm from '@/components/RegistrationForm';
 
 export const revalidate = 60;
@@ -32,7 +32,6 @@ const statusMap = {
 function linkify(text: string) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const parts = text.split(urlRegex);
-
   return parts.map((part, i) => {
     if (urlRegex.test(part)) {
       return (
@@ -57,6 +56,14 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
 
   const hasImages = tournament.image_url || tournament.image_url_2;
 
+  // نتایج (نفرات برتر)
+  // فرض: در دیتابیس فیلد results به صورت JSON ذخیره شده:
+  // [
+  //   { period: "دوره اول", first: "علی رضایی", second: "محمد احمدی", third: "حسین کریمی" },
+  //   { period: "دوره دوم", first: "...", second: "...", third: "..." }
+  // ]
+  const results = tournament.results || [];
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <Link
@@ -72,22 +79,22 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
         {hasImages && (
           <div className="space-y-0">
             {tournament.image_url && (
-              <div className="aspect-[21/9] overflow-hidden">
+              <div className="w-full overflow-hidden bg-slate-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={tournament.image_url}
                   alt={tournament.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto max-h-[420px] object-contain"
                 />
               </div>
             )}
             {tournament.image_url_2 && (
-              <div className="aspect-[21/9] overflow-hidden">
+              <div className="w-full overflow-hidden bg-slate-50">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={tournament.image_url_2}
                   alt={tournament.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-auto max-h-[420px] object-contain"
                 />
               </div>
             )}
@@ -144,6 +151,74 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
           )}
         </div>
       </div>
+
+      {/* جدول نفرات برتر */}
+      {results.length > 0 && (
+        <div className="card p-6 md:p-8 mb-8">
+          <h2 className="text-xl font-bold text-navy-800 mb-6 flex items-center gap-2">
+            <Medal className="w-6 h-6 text-gold-500" />
+            نفرات برتر
+          </h2>
+
+          <div className="space-y-8">
+            {results.map((result: any, index: number) => (
+              <div key={index}>
+                {result.period && (
+                  <h3 className="text-lg font-semibold text-navy-700 mb-3">
+                    {result.period}
+                  </h3>
+                )}
+
+                <div className="overflow-x-auto rounded-xl border border-slate-200">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-600">
+                        <th className="py-3 px-4 text-right font-medium w-24">رتبه</th>
+                        <th className="py-3 px-4 text-right font-medium">نام</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      <tr className="hover:bg-gold-50/50 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1.5 font-medium text-gold-700">
+                            <span className="w-6 h-6 rounded-full bg-gold-100 flex items-center justify-center text-xs">۱</span>
+                            اول
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-navy-800">
+                          {result.first || '—'}
+                        </td>
+                      </tr>
+                      <tr className="hover:bg-slate-50 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1.5 font-medium text-slate-600">
+                            <span className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs">۲</span>
+                            دوم
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-navy-800">
+                          {result.second || '—'}
+                        </td>
+                      </tr>
+                      <tr className="hover:bg-orange-50/50 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <span className="inline-flex items-center gap-1.5 font-medium text-orange-700">
+                            <span className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-xs">۳</span>
+                            سوم
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-navy-800">
+                          {result.third || '—'}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Registration Form */}
       {tournament.registration_open && tournament.status !== 'past' && (
