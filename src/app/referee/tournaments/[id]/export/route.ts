@@ -30,7 +30,11 @@ function headerValue(
       : participant.full_name;
   }
 
-  if (/تلفن|موبایل|شمارهتماس|شمارهتلفن|phone|mobile/.test(normalizedHeader)) {
+  if (
+    /تلفن|موبایل|شمارهتماس|شمارهتلفن|phone|mobile/.test(
+      normalizedHeader,
+    )
+  ) {
     return participant.phone;
   }
 
@@ -43,14 +47,18 @@ function headerValue(
   }
 
   const entries = Object.entries(participant.answers);
+
   const exact = entries.find(
     ([label]) => normalizeTallyLabel(label) === normalizedHeader,
   );
 
-  if (exact) return exact[1];
+  if (exact) {
+    return exact[1];
+  }
 
   const partial = entries.find(([label]) => {
     const normalizedLabel = normalizeTallyLabel(label);
+
     return (
       normalizedLabel.length > 2 &&
       (normalizedHeader.includes(normalizedLabel) ||
@@ -71,17 +79,37 @@ function copyRowStyle(
 
   source.eachCell({ includeEmpty: true }, (cell, colNumber) => {
     const targetCell = target.getCell(colNumber);
+
     targetCell.style = { ...cell.style };
-    targetCell.numFmt = cell.numFmt;
-    targetCell.alignment = cell.alignment
-      ? { ...cell.alignment }
-      : undefined;
-    targetCell.border = cell.border ? { ...cell.border } : undefined;
-    targetCell.fill = cell.fill ? { ...cell.fill } : undefined;
-    targetCell.font = cell.font ? { ...cell.font } : undefined;
+
+    if (cell.numFmt !== undefined) {
+      targetCell.numFmt = cell.numFmt;
+    }
+
+    if (cell.alignment) {
+      targetCell.alignment = { ...cell.alignment };
+    }
+
+    if (cell.border) {
+      targetCell.border = { ...cell.border };
+    }
+
+    if (cell.fill) {
+      targetCell.fill = { ...cell.fill };
+    }
+
+    if (cell.font) {
+      targetCell.font = { ...cell.font };
+    }
+
+    if (cell.protection) {
+      targetCell.protection = { ...cell.protection };
+    }
   });
 
-  target.height = source.height;
+  if (source.height !== undefined) {
+    target.height = source.height;
+  }
 }
 
 function findHeaderRow(worksheet: ExcelJS.Worksheet): number {
@@ -116,10 +144,12 @@ function createFallbackSheet(
   const worksheet = workbook.addWorksheet('ثبت‌نام‌های Tally');
 
   const allLabels = Array.from(
-    new Set(participants.flatMap((p) => Object.keys(p.answers))),
+    new Set(participants.flatMap((participant) =>
+      Object.keys(participant.answers),
+    )),
   );
 
-  const columns = [
+  worksheet.columns = [
     { header: 'نام و نام خانوادگی', key: 'full_name', width: 28 },
     { header: 'تلفن', key: 'phone', width: 18 },
     { header: 'ایمیل', key: 'email', width: 30 },
@@ -129,8 +159,6 @@ function createFallbackSheet(
       width: 24,
     })),
   ];
-
-  worksheet.columns = columns;
 
   for (const participant of participants) {
     const row: Record<string, string> = {
@@ -149,12 +177,14 @@ function createFallbackSheet(
     worksheet.addRow(row);
   }
 
-  worksheet.getRow(1).font = { bold: true };
-  worksheet.getRow(1).alignment = {
+  const headerRow = worksheet.getRow(1);
+  headerRow.font = { bold: true };
+  headerRow.alignment = {
     vertical: 'middle',
     horizontal: 'center',
     wrapText: true,
   };
+
   worksheet.views = [{ state: 'frozen', ySplit: 1 }];
 }
 
@@ -189,6 +219,7 @@ export async function GET(
     const participants = await getTallyParticipants();
 
     const workbook = new ExcelJS.Workbook();
+
     workbook.creator = 'هیأت شطرنج شهرستان نیشابور';
     workbook.subject = `فهرست ثبت‌نام‌های ${tournament.title}`;
     workbook.created = new Date();
@@ -202,7 +233,9 @@ export async function GET(
 
       if (templateResponse.ok) {
         const templateBuffer = await templateResponse.arrayBuffer();
+
         await workbook.xlsx.load(templateBuffer);
+
         loadedTemplate = workbook.worksheets.length > 0;
       }
     }
@@ -213,11 +246,18 @@ export async function GET(
 
       if (headerRowNumber > 0) {
         const headerRow = worksheet.getRow(headerRowNumber);
-        const columnHeaders: Array<{ column: number; label: string }> = [];
+
+        const columnHeaders: Array<{
+          column: number;
+          label: string;
+        }> = [];
 
         headerRow.eachCell((cell, column) => {
           const label = String(cell.text || '').trim();
-          if (label) columnHeaders.push({ column, label });
+
+          if (label) {
+            columnHeaders.push({ column, label });
+          }
         });
 
         const startRow = headerRowNumber + 1;
@@ -225,12 +265,10 @@ export async function GET(
         participants.forEach((participant, index) => {
           const rowNumber = startRow + index;
 
-          if (rowNumber <= worksheet.rowCount) {
-            copyRowStyle(
-              worksheet,
-              Math.max(startRow, rowNumber - 1),
-              rowNumber,
-            );
+          // الگوی استایل از ردیف قبلی گرفته می‌شود.
+          // برای اولین ردیف اطلاعات، استایل ردیف شروع حفظ می‌شود.
+          if (rowNumber > startRow) {
+            copyRowStyle(worksheet, rowNumber - 1, rowNumber);
           }
 
           const row = worksheet.getRow(rowNumber);
