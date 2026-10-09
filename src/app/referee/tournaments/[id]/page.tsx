@@ -5,7 +5,11 @@ import { ArrowRight, Download, Users } from 'lucide-react';
 
 import { isRefereeAuthenticated } from '@/lib/auth';
 import { createServerClient } from '@/lib/supabase';
-import { getTallyParticipants } from '@/lib/tally';
+import {
+  getTallyParticipants,
+  type TallyParticipant,
+} from '@/lib/tally';
+
 import ParticipantsTable from './ParticipantsTable';
 
 export const dynamic = 'force-dynamic';
@@ -28,15 +32,18 @@ export default async function RefereeParticipantsPage({
     .eq('referee_enabled', true)
     .single();
 
-  if (!tournament) notFound();
+  if (!tournament) {
+    notFound();
+  }
 
-  let participants = [];
+  let participants: TallyParticipant[] = [];
   let error: string | null = null;
 
   try {
     participants = await getTallyParticipants();
   } catch (err) {
     console.error('Tally participants error:', err);
+
     error =
       err instanceof Error
         ? err.message
@@ -66,6 +73,7 @@ export default async function RefereeParticipantsPage({
               <h2 className="text-2xl font-bold text-navy-800">
                 {tournament.title}
               </h2>
+
               <p className="flex items-center gap-2 text-slate-500 text-sm mt-2">
                 <Users className="w-4 h-4" />
                 {participants.length} شرکت‌کننده از Tally
@@ -84,10 +92,15 @@ export default async function RefereeParticipantsPage({
 
         {error ? (
           <div className="card p-6 text-red-700">
-            <p className="font-bold mb-2">خطا در دریافت ثبت‌نام‌ها</p>
+            <p className="font-bold mb-2">
+              خطا در دریافت ثبت‌نام‌ها
+            </p>
+
             <p>{error}</p>
+
             <p className="text-sm mt-3">
-              مقدار TALLY_API_KEY و TALLY_FORM_ID را در Vercel بررسی کن.
+              مقدارهای TALLY_API_KEY و TALLY_FORM_ID را در تنظیمات
+              Environment Variables در Vercel بررسی کن.
             </p>
           </div>
         ) : (
