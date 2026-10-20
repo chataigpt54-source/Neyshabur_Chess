@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import {
   Plus,
@@ -42,41 +41,72 @@ const durations = [
   { value: '720', label: '۳۰ روز' },
 ];
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
+    return error.message;
+  }
+
+  return 'خطای ناشناخته‌ای رخ داد.';
+}
+
+function formatDate(value: string | null | undefined): string {
+  if (!value) return 'نامشخص';
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return 'نامشخص';
+
+  return date.toLocaleString('fa-IR');
+}
+
 export default function AdminAnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<FormState>({ ...initialForm });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     setError('');
 
-    const { data, error: queryError } = await supabase
-      .from('announcements')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: queryError } = await supabase
+        .from('announcements')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (queryError) {
-      setError(
-        'دریافت اطلاعیه‌ها ناموفق بود. ابتدا SQL دیتابیس را اجرا کنید. ' +
-          queryError.message
-      );
-      setItems([]);
-    } else {
+      if (queryError) {
+        console.error('[Announcements] خطای دریافت:', queryError);
+        setError(`دریافت اطلاعیه‌ها ناموفق بود: ${queryError.message}`);
+        setItems([]);
+        return;
+      }
+
       setItems(data ?? []);
+    } catch (loadError) {
+      console.error('[Announcements] خطای غیرمنتظره دریافت:', loadError);
+      setError(`خطا هنگام دریافت اطلاعیه‌ها: ${getErrorMessage(loadError)}`);
+      setItems([]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  }
+  }, []);
 
   useEffect(() => {
     void load();
-  }, []);
+  }, [load]);
 
   function openCreate() {
     setEditing(null);
@@ -87,12 +117,14 @@ export default function AdminAnnouncementsPage() {
   }
 
   function openEdit(item: Announcement) {
-    const remainingHours = Math.max(
-      1,
-      Math.ceil(
-        (new Date(item.expires_at).getTime() - Date.now()) / 3600000
-      )
-    );
+    const remainingHours = item.expires_at
+      ? Math.max(
+          1,
+          Math.ceil(
+            (new Date(item.expires_at).getTime() - Date.now()) / 3600000
+          )
+        )
+      : 72;
 
     const matchingDuration = durations.some(
       (duration) => Number(duration.value) === remainingHours
@@ -115,6 +147,8 @@ export default function AdminAnnouncementsPage() {
   }
 
   async function save() {
+    if (saving) return;
+
     setError('');
     setSuccess('');
 
@@ -151,45 +185,75 @@ export default function AdminAnnouncementsPage() {
 
     setSaving(true);
 
-    const now = new Date();
+    try {
+      const now = new Date();
 
-    const values = {
-      title: form.title.trim(),
-      content: form.content.trim(),
-      image_url: imageUrl || null,
-      published: form.published,
-      published_at: now.toISOString(),
-      expires_at: new Date(
-        now.getTime() + duration * 60 * 60 * 1000
-      ).toISOString(),
-      updated_at: now.toISOString(),
-    };
+      const values = {
+        title: form.title.trim(),
+        content: form.content.trim(),
+        image_url: imageUrl || null,
+        published: form.published,
+        published_at: now.toISOString(),
+        expires_at: new Date(
+          now.getTime() + duration * 60 * 60 * 1000
+        ).toISOString(),
+        updated_at: now.toISOString(),
+      };
 
-    const result = editing
-      ? await supabase
-          .from('announcements')
-          .update(values)
-          .eq('id', editing.id)
-      : await supabase
-          .from('announcements')
-          .insert(values);
+      console.info('[Announcements] شروع ذخیره', {
+        mode: editing ? 'update' : 'insert',
+        title: values.title,
+      });
 
-    setSaving(false);
+      const result = editing
+        ? await supabase
+            .from('announcements')
+            .update(values)
+            .eq('id', editing.id)
+            .select('id')
+        : await supabase
+            .from('announcements')
+            .insert(values)
+            .select('id');
 
-    if (result.error) {
-      setError('ذخیره انجام نشد: ' + result.error.message);
-      return;
+      if (result.error) {
+        console.error('[Announcements] خطای ذخیره:', result.error);
+
+        setError(
+          `ذخیره انجام نشد: ${result.error.message}` +
+            (result.error.code ? ` (کد: ${result.error.code})` : '')
+        );
+        return;
+      }
+
+      if (!result.data || result.data.length === 0) {
+        console.error('[Announcements] رکوردی برنگشت:', result);
+
+        setError(
+          'درخواست رکوردی برنگرداند. مجوزهای درج یا ویرایش و سیاست‌های RLS در Supabase را بررسی کنید.'
+        );
+        return;
+      }
+
+      console.info('[Announcements] ذخیره موفق:', result.data);
+
+      setShowForm(false);
+      setEditing(null);
+      setForm({ ...initialForm });
+      setSuccess('اطلاعیه با موفقیت ذخیره شد.');
+
+      await load();
+    } catch (saveError) {
+      console.error('[Announcements] خطای غیرمنتظره ذخیره:', saveError);
+      setError(`خطا هنگام ذخیره اطلاعیه: ${getErrorMessage(saveError)}`);
+    } finally {
+      setSaving(false);
     }
-
-    setShowForm(false);
-    setEditing(null);
-    setForm({ ...initialForm });
-    setSuccess('اطلاعیه با موفقیت ذخیره شد.');
-
-    await load();
   }
 
   async function remove(item: Announcement) {
+    if (deletingId) return;
+
     const confirmed = window.confirm(
       `اطلاعیه «${item.title}» حذف شود؟`
     );
@@ -198,24 +262,42 @@ export default function AdminAnnouncementsPage() {
 
     setError('');
     setSuccess('');
+    setDeletingId(item.id);
 
-    const { error: deleteError } = await supabase
-      .from('announcements')
-      .delete()
-      .eq('id', item.id);
+    try {
+      const { data, error: deleteError } = await supabase
+        .from('announcements')
+        .delete()
+        .eq('id', item.id)
+        .select('id');
 
-    if (deleteError) {
-      setError('حذف انجام نشد: ' + deleteError.message);
-      return;
+      if (deleteError) {
+        console.error('[Announcements] خطای حذف:', deleteError);
+        setError(`حذف انجام نشد: ${deleteError.message}`);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        setError(
+          'اطلاعیه حذف نشد یا مجوز حذف آن وجود ندارد. سیاست‌های RLS را بررسی کنید.'
+        );
+        return;
+      }
+
+      setSuccess('اطلاعیه حذف شد.');
+      await load();
+    } catch (deleteError) {
+      console.error('[Announcements] خطای غیرمنتظره حذف:', deleteError);
+      setError(`خطا هنگام حذف: ${getErrorMessage(deleteError)}`);
+    } finally {
+      setDeletingId(null);
     }
-
-    setSuccess('اطلاعیه حذف شد.');
-    await load();
   }
 
   function isActive(item: Announcement) {
     return (
       item.published &&
+      Boolean(item.expires_at) &&
       new Date(item.expires_at).getTime() > Date.now()
     );
   }
@@ -245,13 +327,19 @@ export default function AdminAnnouncementsPage() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div
+          role="alert"
+          className="mb-4 whitespace-pre-wrap break-words rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+        <div
+          role="status"
+          className="mb-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+        >
           {success}
         </div>
       )}
@@ -265,20 +353,26 @@ export default function AdminAnnouncementsPage() {
 
             <button
               type="button"
-              onClick={() => setShowForm(false)}
+              onClick={() => {
+                if (saving) return;
+                setShowForm(false);
+                setError('');
+              }}
+              disabled={saving}
               aria-label="بستن فرم"
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-50"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label htmlFor="announcement-title" className="mb-2 block text-sm font-medium">
               عنوان اطلاعیه *
             </label>
 
             <input
+              id="announcement-title"
               className="input-field"
               value={form.title}
               maxLength={200}
@@ -286,15 +380,17 @@ export default function AdminAnnouncementsPage() {
                 setForm({ ...form, title: event.target.value })
               }
               placeholder="مثلاً ثبت‌نام مسابقات شطرنج"
+              required
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label htmlFor="announcement-content" className="mb-2 block text-sm font-medium">
               متن اطلاعیه
             </label>
 
             <textarea
+              id="announcement-content"
               className="input-field min-h-[140px]"
               value={form.content}
               maxLength={10000}
@@ -306,11 +402,12 @@ export default function AdminAnnouncementsPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label htmlFor="announcement-image" className="mb-2 block text-sm font-medium">
               آدرس عکس (URL)
             </label>
 
             <input
+              id="announcement-image"
               type="url"
               dir="ltr"
               className="input-field text-left"
@@ -328,6 +425,7 @@ export default function AdminAnnouncementsPage() {
                   پیش‌نمایش عکس
                 </div>
 
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   key={form.image_url}
                   src={form.image_url}
@@ -345,11 +443,12 @@ export default function AdminAnnouncementsPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <label htmlFor="announcement-duration" className="mb-2 block text-sm font-medium">
               مدت اعتبار اطلاعیه
             </label>
 
             <select
+              id="announcement-duration"
               className="input-field"
               value={form.duration_hours}
               onChange={(event) =>
@@ -386,20 +485,27 @@ export default function AdminAnnouncementsPage() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={save}
+              onClick={() => void save()}
               disabled={saving}
-              className="btn-primary flex items-center gap-2"
+              className="btn-primary flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving && (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              )}
-              {saving ? 'در حال ذخیره...' : 'ذخیره اطلاعیه'}
+              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+              {saving
+                ? 'در حال ذخیره...'
+                : editing
+                  ? 'ذخیره تغییرات'
+                  : 'ذخیره اطلاعیه'}
             </button>
 
             <button
               type="button"
-              onClick={() => setShowForm(false)}
-              className="btn-outline"
+              onClick={() => {
+                if (saving) return;
+                setShowForm(false);
+                setError('');
+              }}
+              disabled={saving}
+              className="btn-outline disabled:opacity-50"
             >
               انصراف
             </button>
@@ -429,6 +535,7 @@ export default function AdminAnnouncementsPage() {
                 className="card flex flex-wrap items-center gap-4 p-4"
               >
                 {item.image_url ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={item.image_url}
                     alt=""
@@ -464,8 +571,7 @@ export default function AdminAnnouncementsPage() {
                   </p>
 
                   <p className="mt-2 text-xs text-slate-400">
-                    پایان اعتبار:{' '}
-                    {new Date(item.expires_at).toLocaleString('fa-IR')}
+                    پایان اعتبار: {formatDate(item.expires_at)}
                   </p>
                 </div>
 
@@ -481,11 +587,16 @@ export default function AdminAnnouncementsPage() {
 
                   <button
                     type="button"
-                    onClick={() => remove(item)}
+                    onClick={() => void remove(item)}
+                    disabled={deletingId !== null}
                     aria-label="حذف اطلاعیه"
-                    className="rounded-lg p-2 text-red-500 hover:bg-red-50"
+                    className="rounded-lg p-2 text-red-500 hover:bg-red-50 disabled:opacity-50"
                   >
-                    <Trash2 className="h-5 w-5" />
+                    {deletingId === item.id ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </article>
