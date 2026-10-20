@@ -3,7 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
-async function authorize() {
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const allowedDurations = [6, 12, 24, 72, 168, 336, 720];
+
+async function authorized() {
   try {
     await requireAdmin();
     return true;
@@ -12,288 +17,201 @@ async function authorize() {
   }
 }
 
-export async function GET() {
-  if (!(await authorize())) {
-    return NextResponse.json(
-      { error: 'دسترسی غیرمجاز' },
-      { status: 401 }
-    );
-  }
-
-  const { data, error } = await supabaseAdmin
-    .from('announcements')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('[Admin Announcements GET]', error);
-    return NextResponse.json(
-      { error: 'دریافت اطلاعیه‌ها ناموفق بود' },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({ data });
+function jsonError(message: string, status: number) {
+  return NextResponse.json({ error: message }, { status });
 }
 
-export async function POST(req: NextRequest) {
-  if (!(await authorize())) {
-    return NextResponse.json(
-      { error: 'دسترسی غیرمجاز' },
-      { status: 401 }
-    );
+function validateInput(body: Record<string, unknown>) {
+  const title = typeof body.title === 'string' ? body.title.trim() : '';
+  const content = typeof body.content === 'string' ? body.content.trim() : '';
+  const imageUrl =
+    typeof body.image_url === 'string' ? body.image_url.trim() : '';
+  const duration = Number(body.duration_hours);
+
+  if (!title || title.length > 200) {
+    return { error: 'عنوان الزامی است و باید حداکثر ۲۰۰ کاراکتر باشد.' };
+  }
+
+  if (content.length > 10000) {
+    return { error: 'متن اطلاعیه بیش از حد طولانی است.' };
+  }
+
+  if (!allowedDurations.includes(duration)) {
+    return { error: 'مدت اعتبار انتخاب‌شده معتبر نیست.' };
+  }
+
+  if (imageUrl) {
+    try {
+      const url = new URL(imageUrl);
+
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+        return { error: 'آدرس عکس باید با HTTP یا HTTPS باشد.' };
+      }
+    } catch {
+      return { error: 'آدرس عکس معتبر نیست.' };
+    }
+  }
+
+  return {
+    values: {
+      title,
+      content,
+      image_url: imageUrl || null,
+      published: body.published === true,
+      published_at: new Date().toISOString(),
+      expires_at: new Date(
+        Date.now() + duration * 60 * 60 * 1000
+      ).toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  };
+}
+
+export async function GET() {
+  if (!(await authorized())) {
+    return jsonError('لطفاً دوباره وارد پنل مدیریت شوید.', 401);
   }
 
   try {
-    const body = await req.json();
+    const { data, error } = await supabaseAdmin
+      .from('announcements')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    const title =
-      typeof body.title === 'string' ? body.title.trim() : '';
-
-    if (!title || title.length > 200) {
-      return NextResponse.json(
-        { error: 'عنوان الزامی است و نباید بیشتر از ۲۰۰ کاراکتر باشد' },
-        { status: 400 }
-      );
+    if (error) {
+      console.error('[Announcements GET]', error);
+      return jsonError('دریافت اطلاعیه‌ها ناموفق بود.', 500);
     }
 
-    const now = new Date();
-    const duration = Number(body.duration_hours);
+    return NextResponse.json({ data: data ?? [] });
+  } catch (error) {
+    console.error('[Announcements GET]', error);
+    return jsonError('خطای داخلی هنگام دریافت اطلاعیه‌ها.', 500);
+  }
+}
 
-    if (
-      !Number.isFinite(duration) ||
-      ![6, 12, 24, 72, 168, 336, 720].includes(duration)
-    ) {
-      return NextResponse.json(
-        { error: 'مدت اعتبار نامعتبر است' },
-        { status: 400 }
-      );
+export async function POST(req: NextRequest) {
+  if (!(await authorized())) {
+    return jsonError('لطفاً دوباره وارد پنل مدیریت شوید.', 401);
+  }
+
+  try {
+    const body: unknown = await req.json();
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return jsonError('اطلاعات ارسالی معتبر نیست.', 400);
     }
 
-    const imageUrl =
-      typeof body.image_url === 'string'
-        ? body.image_url.trim()
-        : '';
+    const validated = validateInput(body as Record<string, unknown>);
 
-    if (imageUrl) {
-      try {
-        const url = new URL(imageUrl);
-
-        if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-          throw new Error('invalid protocol');
-        }
-      } catch {
-        return NextResponse.json(
-          { error: 'آدرس عکس نامعتبر است' },
-          { status: 400 }
-        );
-      }
-    }
-
-    const content =
-      typeof body.content === 'string' ? body.content.trim() : '';
-
-    if (content.length > 10000) {
-      return NextResponse.json(
-        { error: 'متن اطلاعیه بیش از حد طولانی است' },
-        { status: 400 }
-      );
+    if ('error' in validated) {
+      return jsonError(validated.error, 400);
     }
 
     const { data, error } = await supabaseAdmin
       .from('announcements')
-      .insert({
-        title,
-        content,
-        image_url: imageUrl || null,
-        published: body.published === true,
-        published_at: now.toISOString(),
-        expires_at: new Date(
-          now.getTime() + duration * 3600000
-        ).toISOString(),
-        updated_at: now.toISOString(),
-      })
+      .insert(validated.values)
       .select('*')
       .single();
 
     if (error) {
-      console.error('[Admin Announcements POST]', error);
-      return NextResponse.json(
-        { error: 'ذخیره اطلاعیه ناموفق بود' },
-        { status: 500 }
-      );
+      console.error('[Announcements POST]', error);
+      return jsonError('ذخیره اطلاعیه در پایگاه داده ناموفق بود.', 500);
     }
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {
-    console.error('[Admin Announcements POST]', error);
-    return NextResponse.json(
-      { error: 'درخواست نامعتبر است' },
-      { status: 400 }
-    );
+    console.error('[Announcements POST]', error);
+    return jsonError('درخواست ذخیره نامعتبر است.', 400);
   }
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!(await authorize())) {
-    return NextResponse.json(
-      { error: 'دسترسی غیرمجاز' },
-      { status: 401 }
-    );
+  if (!(await authorized())) {
+    return jsonError('لطفاً دوباره وارد پنل مدیریت شوید.', 401);
   }
 
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
 
-    if (typeof body.id !== 'string' || !body.id.trim()) {
-      return NextResponse.json(
-        { error: 'شناسه اطلاعیه الزامی است' },
-        { status: 400 }
-      );
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return jsonError('اطلاعات ارسالی معتبر نیست.', 400);
     }
 
-    const title =
-      typeof body.title === 'string' ? body.title.trim() : '';
+    const input = body as Record<string, unknown>;
 
-    if (!title || title.length > 200) {
-      return NextResponse.json(
-        { error: 'عنوان نامعتبر است' },
-        { status: 400 }
-      );
+    if (typeof input.id !== 'string' || !input.id.trim()) {
+      return jsonError('شناسه اطلاعیه ارسال نشده است.', 400);
     }
 
-    const duration = Number(body.duration_hours);
+    const validated = validateInput(input);
 
-    if (
-      !Number.isFinite(duration) ||
-      ![6, 12, 24, 72, 168, 336, 720].includes(duration)
-    ) {
-      return NextResponse.json(
-        { error: 'مدت اعتبار نامعتبر است' },
-        { status: 400 }
-      );
+    if ('error' in validated) {
+      return jsonError(validated.error, 400);
     }
-
-    const content =
-      typeof body.content === 'string' ? body.content.trim() : '';
-
-    if (content.length > 10000) {
-      return NextResponse.json(
-        { error: 'متن اطلاعیه بیش از حد طولانی است' },
-        { status: 400 }
-      );
-    }
-
-    const imageUrl =
-      typeof body.image_url === 'string'
-        ? body.image_url.trim()
-        : '';
-
-    if (imageUrl) {
-      try {
-        const url = new URL(imageUrl);
-
-        if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-          throw new Error('invalid protocol');
-        }
-      } catch {
-        return NextResponse.json(
-          { error: 'آدرس عکس نامعتبر است' },
-          { status: 400 }
-        );
-      }
-    }
-
-    const now = new Date();
 
     const { data, error } = await supabaseAdmin
       .from('announcements')
-      .update({
-        title,
-        content,
-        image_url: imageUrl || null,
-        published: body.published === true,
-        published_at: now.toISOString(),
-        expires_at: new Date(
-          now.getTime() + duration * 3600000
-        ).toISOString(),
-        updated_at: now.toISOString(),
-      })
-      .eq('id', body.id)
+      .update(validated.values)
+      .eq('id', input.id)
       .select('*')
       .maybeSingle();
 
     if (error) {
-      console.error('[Admin Announcements PATCH]', error);
-      return NextResponse.json(
-        { error: 'ویرایش اطلاعیه ناموفق بود' },
-        { status: 500 }
-      );
+      console.error('[Announcements PATCH]', error);
+      return jsonError('ویرایش اطلاعیه ناموفق بود.', 500);
     }
 
     if (!data) {
-      return NextResponse.json(
-        { error: 'اطلاعیه پیدا نشد' },
-        { status: 404 }
-      );
+      return jsonError('اطلاعیه موردنظر پیدا نشد.', 404);
     }
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error('[Admin Announcements PATCH]', error);
-    return NextResponse.json(
-      { error: 'درخواست نامعتبر است' },
-      { status: 400 }
-    );
+    console.error('[Announcements PATCH]', error);
+    return jsonError('درخواست ویرایش نامعتبر است.', 400);
   }
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!(await authorize())) {
-    return NextResponse.json(
-      { error: 'دسترسی غیرمجاز' },
-      { status: 401 }
-    );
+  if (!(await authorized())) {
+    return jsonError('لطفاً دوباره وارد پنل مدیریت شوید.', 401);
   }
 
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
 
-    if (typeof body.id !== 'string' || !body.id.trim()) {
-      return NextResponse.json(
-        { error: 'شناسه اطلاعیه الزامی است' },
-        { status: 400 }
-      );
+    if (
+      !body ||
+      typeof body !== 'object' ||
+      Array.isArray(body) ||
+      typeof (body as Record<string, unknown>).id !== 'string' ||
+      !(body as Record<string, unknown>).id
+    ) {
+      return jsonError('شناسه اطلاعیه معتبر نیست.', 400);
     }
+
+    const id = (body as Record<string, unknown>).id as string;
 
     const { data, error } = await supabaseAdmin
       .from('announcements')
       .delete()
-      .eq('id', body.id)
+      .eq('id', id)
       .select('id')
       .maybeSingle();
 
     if (error) {
-      console.error('[Admin Announcements DELETE]', error);
-      return NextResponse.json(
-        { error: 'حذف اطلاعیه ناموفق بود' },
-        { status: 500 }
-      );
+      console.error('[Announcements DELETE]', error);
+      return jsonError('حذف اطلاعیه ناموفق بود.', 500);
     }
 
     if (!data) {
-      return NextResponse.json(
-        { error: 'اطلاعیه پیدا نشد' },
-        { status: 404 }
-      );
+      return jsonError('اطلاعیه پیدا نشد.', 404);
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('[Admin Announcements DELETE]', error);
-    return NextResponse.json(
-      { error: 'درخواست نامعتبر است' },
-      { status: 400 }
-    );
+    console.error('[Announcements DELETE]', error);
+    return jsonError('درخواست حذف نامعتبر است.', 400);
   }
 }
