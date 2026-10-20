@@ -5,6 +5,7 @@ import {
   Newspaper,
   Trophy,
   ArrowLeft,
+  ArrowRight,
   Users,
   Megaphone,
   Clock,
@@ -18,15 +19,21 @@ async function getLatestNews() {
   try {
     const supabase = createServerClient();
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('news')
       .select('*')
       .eq('published', true)
       .order('published_at', { ascending: false })
       .limit(10);
 
+    if (error) {
+      console.error('خطا در دریافت اخبار:', error.message);
+      return [];
+    }
+
     return data || [];
-  } catch {
+  } catch (error) {
+    console.error('خطا در دریافت اخبار:', error);
     return [];
   }
 }
@@ -41,7 +48,7 @@ async function getActiveAnnouncements(): Promise<Announcement[]> {
       .eq('published', true)
       .gt('expires_at', new Date().toISOString())
       .order('published_at', { ascending: false })
-      .limit(5);
+      .limit(6);
 
     if (error) {
       console.error('خطا در دریافت اطلاعیه‌ها:', error.message);
@@ -149,49 +156,73 @@ export default async function HomePage() {
       {/* Announcements */}
       {announcements.length > 0 && (
         <section className="container mx-auto px-4 pt-12">
-          <div className="mb-6 flex items-center gap-3">
-            <Megaphone className="h-7 w-7 text-gold-600" />
-            <h2 className="section-title">اطلاعیه‌های مهم</h2>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <h2 className="section-title flex items-center gap-2">
+              <Megaphone className="h-7 w-7 text-gold-600" />
+              اطلاعیه‌های مهم
+            </h2>
+
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-sm text-amber-700">
+              {announcements.length} اطلاعیه
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {announcements.map((item) => (
-              <article
+              <Link
                 key={item.id}
-                className="card overflow-hidden border border-gold-200"
+                href={`/announcements/${item.id}`}
+                className="card group overflow-hidden border border-gold-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                {item.image_url && (
-                  <img
-                    src={item.image_url}
-                    alt={item.title}
-                    loading="lazy"
-                    className="max-h-80 w-full object-cover"
-                  />
+                {item.image_url ? (
+                  <div className="aspect-video overflow-hidden bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={item.image_url}
+                      alt={item.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-amber-50 to-yellow-100">
+                    <Megaphone className="h-12 w-12 text-gold-600" />
+                  </div>
                 )}
 
-                <div className="p-5 md:p-6">
-                  <h3 className="text-lg font-bold text-navy-800">
+                <div className="p-5">
+                  <div className="mb-3 flex items-center gap-2 text-xs text-slate-400">
+                    <Clock className="h-4 w-4 shrink-0" />
+                    <time>
+                      {new Date(
+                        item.published_at || item.created_at
+                      ).toLocaleDateString('fa-IR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
+
+                  <h3 className="line-clamp-2 font-bold leading-7 text-navy-800 transition-colors group-hover:text-turquoise-700">
                     {item.title}
                   </h3>
 
                   {item.content && (
-                    <p className="mt-3 whitespace-pre-line leading-8 text-slate-600">
+                    <p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-7 text-slate-500">
                       {item.content}
                     </p>
                   )}
 
-                  <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
-                    <Clock className="h-4 w-4" />
-                    <span>
-                      پایان اعتبار:{' '}
-                      {new Date(item.expires_at).toLocaleString('fa-IR', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
+                  <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
+                    <span className="text-sm font-semibold text-turquoise-700">
+                      ادامه مطلب
                     </span>
+
+                    <ArrowLeft className="h-4 w-4 text-turquoise-700 transition-transform group-hover:-translate-x-1" />
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </section>
@@ -199,7 +230,7 @@ export default async function HomePage() {
 
       {/* Latest News */}
       <section className="container mx-auto px-4 py-16">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <h2 className="section-title flex items-center gap-2">
             <Newspaper className="h-7 w-7 text-turquoise-600" />
             آخرین اخبار
@@ -207,7 +238,7 @@ export default async function HomePage() {
 
           <Link
             href="/news"
-            className="flex items-center gap-1 text-sm font-medium text-turquoise-600 hover:text-turquoise-700"
+            className="flex shrink-0 items-center gap-1 text-sm font-medium text-turquoise-600 hover:text-turquoise-700"
           >
             مشاهده همه
             <ArrowLeft className="h-4 w-4" />
