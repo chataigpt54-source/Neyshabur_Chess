@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -46,6 +47,43 @@ export interface Database {
         Relationships: [];
       };
 
+      announcements: {
+        Row: {
+          id: string;
+          title: string;
+          content: string;
+          image_url: string | null;
+          published: boolean;
+          published_at: string;
+          expires_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          content?: string;
+          image_url?: string | null;
+          published?: boolean;
+          published_at?: string;
+          expires_at: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          content?: string;
+          image_url?: string | null;
+          published?: boolean;
+          published_at?: string;
+          expires_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+
       players: {
         Row: {
           id: string;
@@ -86,11 +124,8 @@ export interface Database {
           end_date: string | null;
           status: 'upcoming' | 'ongoing' | 'past';
           registration_open: boolean;
-
-          // Referee panel
           referee_enabled: boolean;
           referee_file_url: string | null;
-
           image_url: string | null;
           image_url_2: string | null;
           location: string | null;
@@ -99,7 +134,6 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-
         Insert: {
           id?: string;
           title: string;
@@ -108,11 +142,8 @@ export interface Database {
           end_date?: string | null;
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
-
-          // Referee panel
           referee_enabled?: boolean;
           referee_file_url?: string | null;
-
           image_url?: string | null;
           image_url_2?: string | null;
           location?: string | null;
@@ -121,7 +152,6 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-
         Update: {
           id?: string;
           title?: string;
@@ -130,11 +160,8 @@ export interface Database {
           end_date?: string | null;
           status?: 'upcoming' | 'ongoing' | 'past';
           registration_open?: boolean;
-
-          // Referee panel
           referee_enabled?: boolean;
           referee_file_url?: string | null;
-
           image_url?: string | null;
           image_url_2?: string | null;
           location?: string | null;
@@ -143,7 +170,6 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-
         Relationships: [];
       };
 
@@ -159,7 +185,6 @@ export interface Database {
           status: 'pending' | 'approved' | 'rejected';
           created_at: string;
         };
-
         Insert: {
           id?: string;
           tournament_id: string;
@@ -171,7 +196,6 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
         };
-
         Update: {
           id?: string;
           tournament_id?: string;
@@ -183,7 +207,6 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
         };
-
         Relationships: [
           {
             foreignKeyName: 'registrations_tournament_id_fkey';
@@ -202,21 +225,18 @@ export interface Database {
           image_url: string;
           created_at: string;
         };
-
         Insert: {
           id?: string;
           title?: string | null;
           image_url: string;
           created_at?: string;
         };
-
         Update: {
           id?: string;
           title?: string | null;
           image_url?: string;
           created_at?: string;
         };
-
         Relationships: [];
       };
 
@@ -228,7 +248,6 @@ export interface Database {
           content: string;
           updated_at: string;
         };
-
         Insert: {
           id?: string;
           slug: string;
@@ -236,7 +255,6 @@ export interface Database {
           content: string;
           updated_at?: string;
         };
-
         Update: {
           id?: string;
           slug?: string;
@@ -244,7 +262,6 @@ export interface Database {
           content?: string;
           updated_at?: string;
         };
-
         Relationships: [];
       };
 
@@ -254,19 +271,16 @@ export interface Database {
           value: string;
           updated_at: string;
         };
-
         Insert: {
           key: string;
           value: string;
           updated_at?: string;
         };
-
         Update: {
           key?: string;
           value?: string;
           updated_at?: string;
         };
-
         Relationships: [];
       };
 
@@ -277,21 +291,18 @@ export interface Database {
           password_hash: string;
           created_at: string;
         };
-
         Insert: {
           id?: string;
           username: string;
           password_hash: string;
           created_at?: string;
         };
-
         Update: {
           id?: string;
           username?: string;
           password_hash?: string;
           created_at?: string;
         };
-
         Relationships: [];
       };
     };
@@ -316,6 +327,9 @@ export interface Database {
 
 export type News =
   Database['public']['Tables']['news']['Row'];
+
+export type Announcement =
+  Database['public']['Tables']['announcements']['Row'];
 
 export type Player =
   Database['public']['Tables']['players']['Row'];
