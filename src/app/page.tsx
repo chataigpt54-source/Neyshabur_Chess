@@ -5,7 +5,6 @@ import {
   Newspaper,
   Trophy,
   ArrowLeft,
-  ArrowRight,
   Users,
   Megaphone,
   Clock,
