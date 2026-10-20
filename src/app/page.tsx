@@ -10,20 +10,9 @@ import {
   Clock,
 } from 'lucide-react';
 import NewsSlider from '@/components/NewsSlider';
+import type { Announcement } from '@/types/database';
 
 export const revalidate = 60;
-
-type Announcement = {
-  id: string;
-  title: string;
-  content: string;
-  image_url: string | null;
-  published: boolean;
-  published_at: string;
-  expires_at: string;
-  created_at: string;
-  updated_at: string;
-};
 
 async function getLatestNews() {
   try {
@@ -46,7 +35,7 @@ async function getActiveAnnouncements(): Promise<Announcement[]> {
   try {
     const supabase = createServerClient();
 
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('announcements')
       .select('*')
       .eq('published', true)
@@ -55,14 +44,11 @@ async function getActiveAnnouncements(): Promise<Announcement[]> {
       .limit(5);
 
     if (error) {
-      console.error(
-        'خطا در دریافت اطلاعیه‌ها:',
-        error.message
-      );
+      console.error('خطا در دریافت اطلاعیه‌ها:', error.message);
       return [];
     }
 
-    return (data || []) as Announcement[];
+    return data || [];
   } catch (error) {
     console.error('خطا در دریافت اطلاعیه‌ها:', error);
     return [];
@@ -81,7 +67,6 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-gradient-to-bl from-navy-900 via-navy-800 to-turquoise-800 text-white">
         <div className="container relative z-10 mx-auto px-4 py-16 md:py-24">
           <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16">
-            {/* متن */}
             <div className="max-w-3xl flex-1 text-center lg:text-right">
               <div className="mb-6 inline-flex animate-fade-in items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-gold-300 backdrop-blur-sm">
                 <Trophy className="h-4 w-4" />
@@ -125,7 +110,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* کادر ویدیو */}
+            {/* Video */}
             <div className="w-full max-w-[320px] flex-shrink-0 animate-fade-in md:max-w-[380px] lg:max-w-[420px]">
               <div className="overflow-hidden rounded-2xl bg-black/40 shadow-2xl ring-2 ring-white/20">
                 <video
@@ -161,7 +146,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Active Announcements */}
+      {/* Announcements */}
       {announcements.length > 0 && (
         <section className="container mx-auto px-4 pt-12">
           <div className="mb-6 flex items-center gap-3">
@@ -212,7 +197,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Latest News - Slider */}
+      {/* Latest News */}
       <section className="container mx-auto px-4 py-16">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="section-title flex items-center gap-2">
