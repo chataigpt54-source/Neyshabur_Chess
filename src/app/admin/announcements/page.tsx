@@ -1,7 +1,7 @@
+
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import {
   Plus,
   Pencil,
@@ -41,29 +41,42 @@ const durations = [
   { value: '720', label: '۳۰ روز' },
 ];
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-
-  if (
-    typeof error === 'object' &&
-    error !== null &&
-    'message' in error &&
-    typeof error.message === 'string'
-  ) {
-    return error.message;
-  }
-
-  return 'خطای ناشناخته‌ای رخ داد.';
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : 'خطای ناشناخته';
 }
 
-function formatDate(value: string | null | undefined): string {
+async function readResponse(response: Response) {
+  const result: unknown = await response.json();
+
+  if (!result || typeof result !== 'object') {
+    throw new Error('پاسخ سرور معتبر نیست.');
+  }
+
+  const data = result as {
+    data?: unknown;
+    error?: string;
+  };
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+        (response.status === 401
+          ? 'نشست مدیر منقضی شده است؛ دوباره وارد شوید.'
+          : `خطای سرور (${response.status})`)
+    );
+  }
+
+  return data;
+}
+
+function formatDate(value: string | null | undefined) {
   if (!value) return 'نامشخص';
 
   const date = new Date(value);
 
-  if (Number.isNaN(date.getTime())) return 'نامشخص';
-
-  return date.toLocaleString('fa-IR');
+  return Number.isNaN(date.getTime())
+    ? 'نامشخص'
+    : date.toLocaleString('fa-IR');
 }
 
 export default function AdminAnnouncementsPage() {
@@ -82,22 +95,16 @@ export default function AdminAnnouncementsPage() {
     setError('');
 
     try {
-      const { data, error: queryError } = await supabase
-        .from('announcements')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const response = await fetch('/api/admin/announcements', {
+        method: 'GET',
+        cache: 'no-store',
+      });
 
-      if (queryError) {
-        console.error('[Announcements] خطای دریافت:', queryError);
-        setError(`دریافت اطلاعیه‌ها ناموفق بود: ${queryError.message}`);
-        setItems([]);
-        return;
-      }
-
-      setItems(data ?? []);
-    } catch (loadError) {
-      console.error('[Announcements] خطای غیرمنتظره دریافت:', loadError);
-      setError(`خطا هنگام دریافت اطلاعیه‌ها: ${getErrorMessage(loadError)}`);
+      const result = await readResponse(response);
+      setItems(Array.isArray(result.data) ? result.data as Announcement[] : []);
+    } catch (err) {
+      console.error('[Announcements] GET:', err);
+      setError(`دریافت اطلاعیه‌ها ناموفق بود: ${errorMessage(err)}`);
       setItems([]);
     } finally {
       setLoading(false);
@@ -157,24 +164,14 @@ export default function AdminAnnouncementsPage() {
       return;
     }
 
-    const duration = Number(form.duration_hours);
-
-    if (!Number.isFinite(duration) || duration <= 0) {
-      setError('مدت اعتبار انتخاب‌شده معتبر نیست.');
-      return;
-    }
-
     const imageUrl = form.image_url.trim();
 
     if (imageUrl) {
       try {
-        const parsedUrl = new URL(imageUrl);
+        const url = new URL(imageUrl);
 
-        if (
-          parsedUrl.protocol !== 'https:' &&
-          parsedUrl.protocol !== 'http:'
-        ) {
-          setError('آدرس عکس باید با http یا https شروع شود.');
+        if (!['https:', 'http:'].includes(url.protocol)) {
+          setError('آدرس عکس باید با HTTP یا HTTPS شروع شود.');
           return;
         }
       } catch {
@@ -186,56 +183,22 @@ export default function AdminAnnouncementsPage() {
     setSaving(true);
 
     try {
-      const now = new Date();
-
-      const values = {
-        title: form.title.trim(),
-        content: form.content.trim(),
-        image_url: imageUrl || null,
-        published: form.published,
-        published_at: now.toISOString(),
-        expires_at: new Date(
-          now.getTime() + duration * 60 * 60 * 1000
-        ).toISOString(),
-        updated_at: now.toISOString(),
-      };
-
-      console.info('[Announcements] شروع ذخیره', {
-        mode: editing ? 'update' : 'insert',
-        title: values.title,
+      const response = await fetch('/api/admin/announcements', {
+        method: editing ? 'PATCH' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...(editing ? { id: editing.id } : {}),
+          title: form.title.trim(),
+          content: form.content.trim(),
+          image_url: imageUrl,
+          published: form.published,
+          duration_hours: Number(form.duration_hours),
+        }),
       });
 
-      const result = editing
-        ? await supabase
-            .from('announcements')
-            .update(values)
-            .eq('id', editing.id)
-            .select('id')
-        : await supabase
-            .from('announcements')
-            .insert(values)
-            .select('id');
-
-      if (result.error) {
-        console.error('[Announcements] خطای ذخیره:', result.error);
-
-        setError(
-          `ذخیره انجام نشد: ${result.error.message}` +
-            (result.error.code ? ` (کد: ${result.error.code})` : '')
-        );
-        return;
-      }
-
-      if (!result.data || result.data.length === 0) {
-        console.error('[Announcements] رکوردی برنگشت:', result);
-
-        setError(
-          'درخواست رکوردی برنگرداند. مجوزهای درج یا ویرایش و سیاست‌های RLS در Supabase را بررسی کنید.'
-        );
-        return;
-      }
-
-      console.info('[Announcements] ذخیره موفق:', result.data);
+      await readResponse(response);
 
       setShowForm(false);
       setEditing(null);
@@ -243,9 +206,9 @@ export default function AdminAnnouncementsPage() {
       setSuccess('اطلاعیه با موفقیت ذخیره شد.');
 
       await load();
-    } catch (saveError) {
-      console.error('[Announcements] خطای غیرمنتظره ذخیره:', saveError);
-      setError(`خطا هنگام ذخیره اطلاعیه: ${getErrorMessage(saveError)}`);
+    } catch (err) {
+      console.error('[Announcements] SAVE:', err);
+      setError(`ذخیره انجام نشد: ${errorMessage(err)}`);
     } finally {
       setSaving(false);
     }
@@ -265,30 +228,21 @@ export default function AdminAnnouncementsPage() {
     setDeletingId(item.id);
 
     try {
-      const { data, error: deleteError } = await supabase
-        .from('announcements')
-        .delete()
-        .eq('id', item.id)
-        .select('id');
+      const response = await fetch('/api/admin/announcements', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: item.id }),
+      });
 
-      if (deleteError) {
-        console.error('[Announcements] خطای حذف:', deleteError);
-        setError(`حذف انجام نشد: ${deleteError.message}`);
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        setError(
-          'اطلاعیه حذف نشد یا مجوز حذف آن وجود ندارد. سیاست‌های RLS را بررسی کنید.'
-        );
-        return;
-      }
+      await readResponse(response);
 
       setSuccess('اطلاعیه حذف شد.');
       await load();
-    } catch (deleteError) {
-      console.error('[Announcements] خطای غیرمنتظره حذف:', deleteError);
-      setError(`خطا هنگام حذف: ${getErrorMessage(deleteError)}`);
+    } catch (err) {
+      console.error('[Announcements] DELETE:', err);
+      setError(`حذف انجام نشد: ${errorMessage(err)}`);
     } finally {
       setDeletingId(null);
     }
@@ -310,7 +264,6 @@ export default function AdminAnnouncementsPage() {
             <Megaphone className="h-7 w-7 text-turquoise-600" />
             مدیریت اطلاعیه‌ها
           </h1>
-
           <p className="mt-2 text-sm text-slate-500">
             ثبت اطلاعیه، نمایش عکس و تعیین مدت اعتبار
           </p>
@@ -370,7 +323,6 @@ export default function AdminAnnouncementsPage() {
             <label htmlFor="announcement-title" className="mb-2 block text-sm font-medium">
               عنوان اطلاعیه *
             </label>
-
             <input
               id="announcement-title"
               className="input-field"
@@ -388,7 +340,6 @@ export default function AdminAnnouncementsPage() {
             <label htmlFor="announcement-content" className="mb-2 block text-sm font-medium">
               متن اطلاعیه
             </label>
-
             <textarea
               id="announcement-content"
               className="input-field min-h-[140px]"
@@ -405,7 +356,6 @@ export default function AdminAnnouncementsPage() {
             <label htmlFor="announcement-image" className="mb-2 block text-sm font-medium">
               آدرس عکس (URL)
             </label>
-
             <input
               id="announcement-image"
               type="url"
@@ -424,7 +374,6 @@ export default function AdminAnnouncementsPage() {
                   <ImageIcon className="h-4 w-4" />
                   پیش‌نمایش عکس
                 </div>
-
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   key={form.image_url}
@@ -446,16 +395,12 @@ export default function AdminAnnouncementsPage() {
             <label htmlFor="announcement-duration" className="mb-2 block text-sm font-medium">
               مدت اعتبار اطلاعیه
             </label>
-
             <select
               id="announcement-duration"
               className="input-field"
               value={form.duration_hours}
               onChange={(event) =>
-                setForm({
-                  ...form,
-                  duration_hours: event.target.value,
-                })
+                setForm({ ...form, duration_hours: event.target.value })
               }
             >
               {durations.map((duration) => (
@@ -464,7 +409,6 @@ export default function AdminAnnouncementsPage() {
                 </option>
               ))}
             </select>
-
             <p className="mt-2 text-xs text-slate-500">
               اعتبار از لحظه ذخیره محاسبه می‌شود.
             </p>
@@ -520,9 +464,7 @@ export default function AdminAnnouncementsPage() {
       ) : items.length === 0 ? (
         <div className="card p-12 text-center">
           <Megaphone className="mx-auto mb-4 h-12 w-12 text-slate-300" />
-          <p className="text-slate-500">
-            هنوز اطلاعیه‌ای ثبت نشده است.
-          </p>
+          <p className="text-slate-500">هنوز اطلاعیه‌ای ثبت نشده است.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -549,10 +491,7 @@ export default function AdminAnnouncementsPage() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-bold text-navy-800">
-                      {item.title}
-                    </h3>
-
+                    <h3 className="font-bold text-navy-800">{item.title}</h3>
                     {active ? (
                       <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
                         <Eye className="ml-1 inline h-3 w-3" />
@@ -569,7 +508,6 @@ export default function AdminAnnouncementsPage() {
                   <p className="mt-2 line-clamp-2 text-sm text-slate-500">
                     {item.content || 'بدون متن'}
                   </p>
-
                   <p className="mt-2 text-xs text-slate-400">
                     پایان اعتبار: {formatDate(item.expires_at)}
                   </p>
