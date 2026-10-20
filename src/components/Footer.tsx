@@ -66,7 +66,7 @@ export default function Footer() {
               <li className="flex gap-2 items-start">
                 <MapPin className="w-4 h-4 mt-0.5 text-turquoise-400 flex-shrink-0" />
                 <span>
-                  خراسان رضوی، نیشابور، خیابان فلسطین، درب ورودی هیأت فوتبال، طبقه دوم
+                  خراسان رضوی، نیشابور ،خیابان کمال‌الملک ، درب شمالی مجموعه ورزشی تختی ، طبقه فوقانی سالن سنگ‌نوردی
                 </span>
               </li>
 
