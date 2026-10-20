@@ -14,20 +14,17 @@ import {
   Image as ImageIcon,
   X,
 } from 'lucide-react';
+import type { Announcement } from '@/types/database';
 
-type Announcement = {
-  id: string;
+type FormState = {
   title: string;
   content: string;
-  image_url: string | null;
+  image_url: string;
   published: boolean;
-  published_at: string;
-  expires_at: string;
-  created_at: string;
-  updated_at: string;
+  duration_hours: string;
 };
 
-const initialForm = {
+const initialForm: FormState = {
   title: '',
   content: '',
   image_url: '',
@@ -35,13 +32,23 @@ const initialForm = {
   duration_hours: '72',
 };
 
+const durations = [
+  { value: '6', label: '۶ ساعت' },
+  { value: '12', label: '۱۲ ساعت' },
+  { value: '24', label: '۱ روز' },
+  { value: '72', label: '۳ روز' },
+  { value: '168', label: '۷ روز' },
+  { value: '336', label: '۱۴ روز' },
+  { value: '720', label: '۳۰ روز' },
+];
+
 export default function AdminAnnouncementsPage() {
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState<FormState>({ ...initialForm });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -49,16 +56,19 @@ export default function AdminAnnouncementsPage() {
     setLoading(true);
     setError('');
 
-    const { data, error } = await (supabase as any)
+    const { data, error: queryError } = await supabase
       .from('announcements')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      setError('دریافت اطلاعیه‌ها ناموفق بود: ' + error.message);
+    if (queryError) {
+      setError(
+        'دریافت اطلاعیه‌ها ناموفق بود. ابتدا SQL دیتابیس را اجرا کنید. ' +
+          queryError.message
+      );
       setItems([]);
     } else {
-      setItems((data || []) as Announcement[]);
+      setItems(data ?? []);
     }
 
     setLoading(false);
@@ -80,12 +90,15 @@ export default function AdminAnnouncementsPage() {
     const remainingHours = Math.max(
       1,
       Math.ceil(
-        (new Date(item.expires_at).getTime() - Date.now()) /
-          (60 * 60 * 1000)
+        (new Date(item.expires_at).getTime() - Date.now()) / 3600000
       )
     );
 
-    const allowedDurations = ['6', '12', '24', '72', '168', '336', '720'];
+    const matchingDuration = durations.some(
+      (duration) => Number(duration.value) === remainingHours
+    )
+      ? String(remainingHours)
+      : '72';
 
     setEditing(item);
     setForm({
@@ -93,9 +106,7 @@ export default function AdminAnnouncementsPage() {
       content: item.content || '',
       image_url: item.image_url || '',
       published: item.published,
-      duration_hours: allowedDurations.includes(String(remainingHours))
-        ? String(remainingHours)
-        : '72',
+      duration_hours: matchingDuration,
     });
 
     setError('');
@@ -119,11 +130,16 @@ export default function AdminAnnouncementsPage() {
       return;
     }
 
-    if (form.image_url.trim()) {
-      try {
-        const url = new URL(form.image_url.trim());
+    const imageUrl = form.image_url.trim();
 
-        if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+    if (imageUrl) {
+      try {
+        const parsedUrl = new URL(imageUrl);
+
+        if (
+          parsedUrl.protocol !== 'https:' &&
+          parsedUrl.protocol !== 'http:'
+        ) {
           setError('آدرس عکس باید با http یا https شروع شود.');
           return;
         }
@@ -136,10 +152,11 @@ export default function AdminAnnouncementsPage() {
     setSaving(true);
 
     const now = new Date();
+
     const values = {
       title: form.title.trim(),
       content: form.content.trim(),
-      image_url: form.image_url.trim() || null,
+      image_url: imageUrl || null,
       published: form.published,
       published_at: now.toISOString(),
       expires_at: new Date(
@@ -149,11 +166,11 @@ export default function AdminAnnouncementsPage() {
     };
 
     const result = editing
-      ? await (supabase as any)
+      ? await supabase
           .from('announcements')
           .update(values)
           .eq('id', editing.id)
-      : await (supabase as any)
+      : await supabase
           .from('announcements')
           .insert(values);
 
@@ -182,13 +199,13 @@ export default function AdminAnnouncementsPage() {
     setError('');
     setSuccess('');
 
-    const { error } = await (supabase as any)
+    const { error: deleteError } = await supabase
       .from('announcements')
       .delete()
       .eq('id', item.id);
 
-    if (error) {
-      setError('حذف انجام نشد: ' + error.message);
+    if (deleteError) {
+      setError('حذف انجام نشد: ' + deleteError.message);
       return;
     }
 
@@ -213,7 +230,7 @@ export default function AdminAnnouncementsPage() {
           </h1>
 
           <p className="mt-2 text-sm text-slate-500">
-            ثبت اطلاعیه، تعیین مدت اعتبار و نمایش عکس با URL
+            ثبت اطلاعیه، نمایش عکس و تعیین مدت اعتبار
           </p>
         </div>
 
@@ -264,11 +281,11 @@ export default function AdminAnnouncementsPage() {
             <input
               className="input-field"
               value={form.title}
-              onChange={(e) =>
-                setForm({ ...form, title: e.target.value })
+              maxLength={200}
+              onChange={(event) =>
+                setForm({ ...form, title: event.target.value })
               }
               placeholder="مثلاً ثبت‌نام مسابقات شطرنج"
-              maxLength={200}
             />
           </div>
 
@@ -280,11 +297,11 @@ export default function AdminAnnouncementsPage() {
             <textarea
               className="input-field min-h-[140px]"
               value={form.content}
-              onChange={(e) =>
-                setForm({ ...form, content: e.target.value })
+              maxLength={10000}
+              onChange={(event) =>
+                setForm({ ...form, content: event.target.value })
               }
               placeholder="متن اطلاعیه را وارد کنید..."
-              maxLength={10000}
             />
           </div>
 
@@ -298,15 +315,11 @@ export default function AdminAnnouncementsPage() {
               dir="ltr"
               className="input-field text-left"
               value={form.image_url}
-              onChange={(e) =>
-                setForm({ ...form, image_url: e.target.value })
+              onChange={(event) =>
+                setForm({ ...form, image_url: event.target.value })
               }
               placeholder="https://example.com/announcement.jpg"
             />
-
-            <p className="mt-2 text-xs text-slate-500">
-              آدرس مستقیم عکس را وارد کن. بهتر است از HTTPS استفاده شود.
-            </p>
 
             {form.image_url.trim() && (
               <div className="mt-4 rounded-xl border border-slate-200 p-3">
@@ -318,13 +331,13 @@ export default function AdminAnnouncementsPage() {
                 <img
                   key={form.image_url}
                   src={form.image_url}
-                  alt="پیش‌نمایش عکس اطلاعیه"
+                  alt="پیش‌نمایش اطلاعیه"
                   className="max-h-72 w-full rounded-lg object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                  onError={(event) => {
+                    event.currentTarget.style.display = 'none';
                   }}
-                  onLoad={(e) => {
-                    e.currentTarget.style.display = 'block';
+                  onLoad={(event) => {
+                    event.currentTarget.style.display = 'block';
                   }}
                 />
               </div>
@@ -339,25 +352,22 @@ export default function AdminAnnouncementsPage() {
             <select
               className="input-field"
               value={form.duration_hours}
-              onChange={(e) =>
+              onChange={(event) =>
                 setForm({
                   ...form,
-                  duration_hours: e.target.value,
+                  duration_hours: event.target.value,
                 })
               }
             >
-              <option value="6">۶ ساعت</option>
-              <option value="12">۱۲ ساعت</option>
-              <option value="24">۱ روز</option>
-              <option value="72">۳ روز</option>
-              <option value="168">۷ روز</option>
-              <option value="336">۱۴ روز</option>
-              <option value="720">۳۰ روز</option>
+              {durations.map((duration) => (
+                <option key={duration.value} value={duration.value}>
+                  {duration.label}
+                </option>
+              ))}
             </select>
 
             <p className="mt-2 text-xs text-slate-500">
-              مدت از لحظه ذخیره محاسبه می‌شود. هنگام ویرایش نیز اعتبار
-              از نو محاسبه خواهد شد.
+              اعتبار از لحظه ذخیره محاسبه می‌شود.
             </p>
           </div>
 
@@ -365,15 +375,11 @@ export default function AdminAnnouncementsPage() {
             <input
               type="checkbox"
               checked={form.published}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  published: e.target.checked,
-                })
+              onChange={(event) =>
+                setForm({ ...form, published: event.target.checked })
               }
               className="h-4 w-4"
             />
-
             <span className="text-sm">انتشار در صفحه اصلی</span>
           </label>
 
@@ -384,7 +390,9 @@ export default function AdminAnnouncementsPage() {
               disabled={saving}
               className="btn-primary flex items-center gap-2"
             >
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+              {saving && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
               {saving ? 'در حال ذخیره...' : 'ذخیره اطلاعیه'}
             </button>
 
@@ -465,7 +473,7 @@ export default function AdminAnnouncementsPage() {
                   <button
                     type="button"
                     onClick={() => openEdit(item)}
-                    title="ویرایش اطلاعیه"
+                    aria-label="ویرایش اطلاعیه"
                     className="rounded-lg p-2 text-navy-600 hover:bg-slate-100"
                   >
                     <Pencil className="h-5 w-5" />
@@ -474,7 +482,7 @@ export default function AdminAnnouncementsPage() {
                   <button
                     type="button"
                     onClick={() => remove(item)}
-                    title="حذف اطلاعیه"
+                    aria-label="حذف اطلاعیه"
                     className="rounded-lg p-2 text-red-500 hover:bg-red-50"
                   >
                     <Trash2 className="h-5 w-5" />
