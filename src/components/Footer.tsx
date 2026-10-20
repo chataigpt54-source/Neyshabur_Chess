@@ -1,6 +1,12 @@
-
 import Link from 'next/link';
-import { Instagram, Send, MessageCircle, MapPin, Phone, Mail } from 'lucide-react';
+import {
+  Instagram,
+  Send,
+  MessageCircle,
+  MapPin,
+  Phone,
+  Mail,
+} from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -25,32 +31,64 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/news" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/news"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   اخبار
                 </Link>
               </li>
+
               <li>
-                <Link href="/players" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/announcements"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
+                  اطلاعیه‌ها
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/players"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   بازیکنان و مربیان و داوران
                 </Link>
               </li>
+
               <li>
-                <Link href="/tournaments" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/tournaments"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   تورنمنت‌ها
                 </Link>
               </li>
+
               <li>
-                <Link href="/gallery" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/gallery"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   گالری
                 </Link>
               </li>
+
               <li>
-                <Link href="/about" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/about"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   درباره ما
                 </Link>
               </li>
+
               <li>
-                <Link href="/contact" className="text-slate-300 hover:text-turquoise-300 transition-colors">
+                <Link
+                  href="/contact"
+                  className="text-slate-300 hover:text-turquoise-300 transition-colors"
+                >
                   تماس با ما
                 </Link>
               </li>
@@ -62,11 +100,13 @@ export default function Footer() {
             <h3 className="text-lg font-bold text-gold-400 mb-4">
               ارتباط با ما
             </h3>
+
             <ul className="space-y-3 text-sm text-slate-300">
               <li className="flex gap-2 items-start">
                 <MapPin className="w-4 h-4 mt-0.5 text-turquoise-400 flex-shrink-0" />
                 <span>
-                  خراسان رضوی، نیشابور ،خیابان کمال‌الملک ، درب شمالی مجموعه ورزشی تختی ، طبقه فوقانی سالن سنگ‌نوردی
+                  خراسان رضوی، نیشابور، خیابان کمال‌الملک، درب شمالی مجموعه
+                  ورزشی تختی، طبقه فوقانی سالن سنگ‌نوردی
                 </span>
               </li>
 
@@ -79,6 +119,7 @@ export default function Footer() {
                   >
                     مهدی بوژمهرانی — ۰۹۱۵۳۵۲۸۱۷۷
                   </a>
+
                   <a
                     href="tel:+989155516167"
                     className="hover:text-turquoise-300 transition-colors block mt-1"
@@ -106,6 +147,7 @@ export default function Footer() {
             <h3 className="text-lg font-bold text-gold-400 mb-4">
               شبکه‌های اجتماعی
             </h3>
+
             <div className="flex gap-4">
               <a
                 href="https://www.instagram.com/chessneyshabur.official"
