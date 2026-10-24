@@ -18,6 +18,7 @@ export const revalidate = 60;
 async function getLatestNews() {
   try {
     const supabase = createServerClient();
+
     const { data, error } = await supabase
       .from('news')
       .select('*')
@@ -26,6 +27,7 @@ async function getLatestNews() {
       .limit(10);
 
     if (error) return [];
+
     return data || [];
   } catch {
     return [];
@@ -35,6 +37,7 @@ async function getLatestNews() {
 async function getActiveAnnouncements(): Promise<Announcement[]> {
   try {
     const supabase = createServerClient();
+
     const { data, error } = await supabase
       .from('announcements')
       .select('*')
@@ -44,6 +47,7 @@ async function getActiveAnnouncements(): Promise<Announcement[]> {
       .limit(6);
 
     if (error) return [];
+
     return data || [];
   } catch {
     return [];
@@ -61,7 +65,7 @@ export default async function HomePage() {
       dir="rtl"
       className="min-h-screen overflow-hidden bg-[#f3f6f9] text-[#0b2342]"
     >
-      {/* بخش اصلی با ویدئوی پس‌زمینه */}
+      {/* بخش اصلی ویدئویی */}
       <section className="hero-video relative isolate flex min-h-[520px] items-center overflow-hidden bg-[#071a32] py-16 text-white md:min-h-[590px]">
         <div className="absolute inset-0 -z-30">
           <video
@@ -84,6 +88,7 @@ export default async function HomePage() {
           aria-hidden="true"
           className="hero-triangle hero-triangle-one pointer-events-none absolute -left-24 -top-24 h-[340px] w-[340px] rotate-[30deg] border border-white/20 bg-gradient-to-br from-white/20 via-white/5 to-transparent backdrop-blur-[2px]"
         />
+
         <div
           aria-hidden="true"
           className="hero-triangle hero-triangle-two pointer-events-none absolute -left-32 top-36 h-[250px] w-[250px] rotate-[30deg] border border-white/15 bg-gradient-to-br from-white/15 to-transparent"
@@ -93,6 +98,7 @@ export default async function HomePage() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#06172d]/80 to-transparent"
         />
+
         <div
           aria-hidden="true"
           className="hero-gold-line pointer-events-none absolute inset-x-0 bottom-5 h-px"
@@ -100,18 +106,24 @@ export default async function HomePage() {
 
         <div className="container relative mx-auto px-5 md:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* تزئینات بصری */}
+            {/* تزئینات بصری دسکتاپ */}
             <div className="hero-visual order-2 hidden min-h-[280px] lg:block">
               <div className="relative h-[310px]">
                 <div className="hero-glass-panel absolute bottom-2 left-3 h-40 w-64 rounded-3xl border border-white/20 bg-white/[0.06] backdrop-blur-md" />
+
                 <div className="hero-glass-panel absolute left-24 top-2 h-44 w-52 rounded-3xl border border-white/15 bg-white/[0.04] backdrop-blur-sm" />
+
                 <div className="absolute bottom-12 left-20 h-24 w-24 rounded-full bg-[#d9ad54]/15 blur-3xl" />
+
                 <div className="absolute bottom-8 left-12 max-w-52 rounded-2xl border border-white/15 bg-[#071a32]/45 p-5 backdrop-blur-md">
-                  <p className="text-sm font-bold text-white">شهر نیشابور</p>
+                  <p className="text-sm font-bold text-white">
+                    شهر نیشابور
+                  </p>
                   <p className="mt-2 text-xs leading-6 text-slate-300">
                     زادگاه اندیشه، فرهنگ و حکمت
                   </p>
                 </div>
+
                 <div className="absolute right-4 top-10 h-32 w-32 rotate-45 border border-[#edc66f]/30" />
                 <div className="absolute right-12 top-20 h-20 w-20 rotate-45 border border-white/20" />
               </div>
@@ -124,10 +136,10 @@ export default async function HomePage() {
                 به وب‌سایت رسمی
               </div>
 
-              <h1 className="text-4xl font-black leading-[1.5] tracking-tight sm:text-5xl lg:text-6xl">
-                هیأت شطرنج
+              <h1 className="hero-title text-3xl font-black leading-[1.7] tracking-tight sm:text-4xl lg:text-5xl">
+                <span className="block">هیأت شطرنج</span>
                 <span className="hero-title-accent mt-1 block">
-                  نیشابور
+                  شهرستان نیشابور
                 </span>
               </h1>
 
@@ -181,6 +193,7 @@ export default async function HomePage() {
       {/* اخبار و اطلاعیه‌ها */}
       <section className="container mx-auto space-y-10 px-4 py-10 md:px-8 md:py-14">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+          {/* ستون اخبار */}
           <div className="min-w-0 space-y-6 lg:col-span-3">
             <div className="section-heading flex items-center justify-between gap-4 border-b border-slate-200/90 pb-4">
               <h2 className="flex items-center gap-3 text-lg font-black text-[#0b2342] md:text-xl">
@@ -212,12 +225,14 @@ export default async function HomePage() {
               </div>
             )}
 
+            {/* اطلاعیه‌های مهم */}
             {announcements.length > 0 && (
               <section className="space-y-4 pt-5">
                 <div className="flex items-center gap-3 border-b border-slate-200/90 pb-3">
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#edc66f]/20 text-[#9b7022]">
                     <Megaphone className="h-5 w-5" />
                   </span>
+
                   <h3 className="text-lg font-black text-[#0b2342]">
                     اطلاعیه‌های مهم
                   </h3>
@@ -228,7 +243,9 @@ export default async function HomePage() {
                     <Link
                       key={item.id}
                       href={`/announcements/${item.id}`}
-                      style={{ '--card-index': index } as React.CSSProperties}
+                      style={
+                        { '--card-index': index } as React.CSSProperties
+                      }
                       className="announcement-card group flex items-center gap-4 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm"
                     >
                       <div className="announcement-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#edc66f]/15 text-[#a47b2d]">
@@ -239,6 +256,7 @@ export default async function HomePage() {
                         <h4 className="truncate text-sm font-bold text-[#0b2342]">
                           {item.title}
                         </h4>
+
                         <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500">
                           <Clock className="h-3.5 w-3.5" />
                           <time>
@@ -263,6 +281,7 @@ export default async function HomePage() {
               aria-hidden="true"
               className="quote-decoration pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full border border-white/10"
             />
+
             <div
               aria-hidden="true"
               className="quote-decoration pointer-events-none absolute -bottom-5 -left-3 h-32 w-32 rounded-full border border-[#edc66f]/20"
@@ -291,6 +310,7 @@ export default async function HomePage() {
               <p className="text-sm font-extrabold text-white">
                 عطار نیشابوری
               </p>
+
               <p className="mt-1 text-xs leading-6 text-slate-300">
                 برگرفته از الهی‌نامه
               </p>
@@ -299,7 +319,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* انیمیشن‌های اختصاصی صفحه */}
+      {/* استایل‌ها و انیمیشن‌های اختصاصی */}
       <style>{`
         .hero-video {
           isolation: isolate;
@@ -307,8 +327,17 @@ export default async function HomePage() {
 
         .hero-vignette {
           background:
-            radial-gradient(ellipse at 25% 35%, transparent 0%, rgba(4, 18, 36, .2) 48%, rgba(4, 18, 36, .65) 100%),
-            linear-gradient(0deg, rgba(5, 21, 40, .72), transparent 38%);
+            radial-gradient(
+              ellipse at 25% 35%,
+              transparent 0%,
+              rgba(4, 18, 36, .2) 48%,
+              rgba(4, 18, 36, .65) 100%
+            ),
+            linear-gradient(
+              0deg,
+              rgba(5, 21, 40, .72),
+              transparent 38%
+            );
         }
 
         .hero-triangle {
@@ -324,7 +353,13 @@ export default async function HomePage() {
         }
 
         .hero-gold-line {
-          background: linear-gradient(90deg, transparent, #edc66f, rgba(255,255,255,.5), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            #edc66f,
+            rgba(255,255,255,.5),
+            transparent
+          );
           opacity: .8;
           box-shadow: 0 0 18px rgba(237,198,111,.3);
         }
@@ -338,10 +373,23 @@ export default async function HomePage() {
           animation-delay: -3s;
         }
 
+        .hero-title {
+          overflow-wrap: normal;
+          word-break: normal;
+        }
+
         .hero-title-accent {
+          display: block;
           width: fit-content;
-          margin-right: 0;
-          background: linear-gradient(110deg, #fff1c5 0%, #edc66f 38%, #d4a344 65%, #f9e4a5 100%);
+          max-width: 100%;
+          margin-inline: 0;
+          background: linear-gradient(
+            110deg,
+            #fff1c5 0%,
+            #edc66f 38%,
+            #d4a344 65%,
+            #f9e4a5 100%
+          );
           background-size: 200% auto;
           background-clip: text;
           -webkit-background-clip: text;
@@ -366,7 +414,12 @@ export default async function HomePage() {
           z-index: -1;
           inset: 0;
           transform: translateX(130%) skewX(-20deg);
-          background: linear-gradient(100deg, transparent, rgba(255,255,255,.38), transparent);
+          background: linear-gradient(
+            100deg,
+            transparent,
+            rgba(255,255,255,.38),
+            transparent
+          );
           transition: transform .65s ease;
         }
 
@@ -383,7 +436,12 @@ export default async function HomePage() {
         }
 
         .btn-alive-gold {
-          background: linear-gradient(115deg, #f6df9c, #edc66f 48%, #e4b955);
+          background: linear-gradient(
+            115deg,
+            #f6df9c,
+            #edc66f 48%,
+            #e4b955
+          );
           box-shadow: 0 8px 24px rgba(214,169,74,.2);
         }
 
@@ -468,23 +526,41 @@ export default async function HomePage() {
         }
 
         @keyframes triangle-float {
-          from { transform: rotate(30deg) translate3d(0, 0, 0); }
-          to { transform: rotate(34deg) translate3d(10px, -8px, 0); }
+          from {
+            transform: rotate(30deg) translate3d(0, 0, 0);
+          }
+          to {
+            transform: rotate(34deg) translate3d(10px, -8px, 0);
+          }
         }
 
         @keyframes glass-float {
-          from { transform: translateY(0) rotate(0deg); }
-          to { transform: translateY(-8px) rotate(1deg); }
+          from {
+            transform: translateY(0) rotate(0deg);
+          }
+          to {
+            transform: translateY(-8px) rotate(1deg);
+          }
         }
 
         @keyframes title-shimmer {
-          0% { background-position: 200% center; }
-          100% { background-position: -200% center; }
+          0% {
+            background-position: 200% center;
+          }
+          100% {
+            background-position: -200% center;
+          }
         }
 
         @keyframes content-enter {
-          from { opacity: 0; transform: translateY(14px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         @media (max-width: 640px) {
