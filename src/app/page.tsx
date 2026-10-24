@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import {
   Newspaper,
-  Trophy,
   ArrowLeft,
   Search,
   Megaphone,
@@ -75,7 +74,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/80 to-navy-900/85 backdrop-blur-[2px]" />
         </div>
 
-        {/* حاشیه دکوراتیو هندسی سفید در سمت چپ هدر (مطابق طرح) */}
+        {/* حاشیه دکوراتیو هندسی سفید در سمت چپ هدر */}
         <div className="absolute left-0 top-0 bottom-0 w-24 md:w-36 bg-gradient-to-r from-[#f3f6f9] to-transparent opacity-20 pointer-events-none z-10 -skew-x-12 transform -translate-x-10" />
 
         <div className="container relative z-20 mx-auto px-4 my-auto">
@@ -207,7 +206,7 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* سمت چپ (1 ستون): بنر سرمه‌ای نقل‌قول (دقیقاً مطابق طرح) */}
+          {/* سمت چپ (1 ستون): بنر سرمه‌ای نقل‌قول */}
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 rounded-2xl p-6 text-white shadow-xl border border-gold-500/20 relative overflow-hidden flex flex-col justify-between h-full min-h-[320px]">
               <div>
