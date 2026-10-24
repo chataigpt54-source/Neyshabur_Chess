@@ -4,14 +4,10 @@ import {
   Newspaper,
   Trophy,
   ArrowLeft,
-  Users,
+  Search,
   Megaphone,
   Clock,
   Calendar,
-  Sparkles,
-  BookOpen,
-  ChevronDown,
-  Info,
 } from 'lucide-react';
 import NewsSlider from '@/components/NewsSlider';
 import type { Announcement } from '@/types/database';
@@ -61,150 +57,101 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#f3f6f9] text-navy-950 pb-16">
-      {/* 1. Hero Banner - بخش اصلی ویدیویی و متنی هدر */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white pb-24 pt-10 md:pt-16">
-        <div className="absolute top-0 right-1/4 h-96 w-96 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-10 h-80 w-80 rounded-full bg-turquoise-500/10 blur-3xl pointer-events-none" />
+      {/* 1. Hero Banner - بنر هدر عریض همراه با پس‌زمینه ویدیویی و اوورلی سرمه‌ای */}
+      <section className="relative overflow-hidden bg-navy-950 text-white min-h-[520px] lg:min-h-[580px] flex flex-col justify-between pb-16 pt-6">
+        
+        {/* ویدیوی افقی پس‌زمینه با لایه نیمه‌شفاف سرمه‌ای */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video
+            src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000087731%20-%20herminal.com%20compressed.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="w-full h-full object-cover opacity-35 scale-105"
+          />
+          {/* اوورلی گرادیان سرمه‌ای تیره */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/80 to-navy-900/85 backdrop-blur-[2px]" />
+        </div>
 
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-12">
-            
-            {/* سمت راست: عنوان و متون معرفی */}
-            <div className="max-w-2xl flex-1 text-center lg:text-right">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-navy-900/80 border border-gold-500/30 px-4 py-1.5 text-xs md:text-sm font-semibold text-gold-400 backdrop-blur-md">
-                <Trophy className="h-4 w-4 text-gold-400" />
-                <span>وب‌سایت رسمی هیأت شطرنج</span>
-              </div>
+        {/* حاشیه دکوراتیو هندسی سفید در سمت چپ هدر (مطابق طرح) */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-36 bg-gradient-to-r from-[#f3f6f9] to-transparent opacity-20 pointer-events-none z-10 -skew-x-12 transform -translate-x-10" />
 
-              <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight md:text-5xl lg:text-6xl text-white">
-                هیأت شطرنج
-                <span className="mt-2 block bg-gradient-to-l from-gold-300 via-gold-400 to-gold-500 bg-clip-text text-transparent">
-                  شهرستان نیشابور
-                </span>
-              </h1>
-
-              <p className="mx-auto mb-8 max-w-xl text-sm leading-relaxed text-slate-300 md:text-base lg:mx-0">
-                مرکز رسمی توسعه، آموزش تخصصی و برگزاری مسابقات شطرنج در نیشابور. همراه ما باشید تا استعدادهای شطرنجی شهرستان را شکوفا کنیم.
-              </p>
-
-              {/* دکمه‌های اصلی */}
-              <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
-                <Link
-                  href="/tournaments"
-                  className="btn-gold btn-alive-gold shadow-gold/40 hover:shadow-gold/60"
-                >
-                  <span>شروع بازی / مسابقات</span>
-                  <ArrowLeft className="h-4 w-4" />
-                </Link>
-
-                <Link
-                  href="/tournaments"
-                  className="btn-secondary hover:border-gold-500/50 hover:text-gold-400"
-                >
-                  <Calendar className="h-4 w-4 text-gold-400" />
-                  <span>جدول مسابقات</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* سمت چپ: فیلم‌ها (افقی + عمودی) */}
-            <div className="w-full max-w-[600px] flex-shrink-0 lg:w-[48%]">
-              <div className="grid grid-cols-2 items-center gap-3 p-2.5 rounded-3xl bg-navy-900/60 border border-gold-500/20 backdrop-blur-md shadow-2xl">
-                {/* ویدیوی افقی */}
-                <div className="min-w-0 overflow-hidden rounded-2xl bg-black/60 shadow-xl ring-1 ring-gold-500/30 group">
-                  <video
-                    src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000087731%20-%20herminal.com%20compressed.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    controls
-                    className="block aspect-video w-full object-contain"
-                  >
-                    مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-                  </video>
-                </div>
-
-                {/* ویدیوی عمودی */}
-                <div className="min-w-0 overflow-hidden rounded-2xl bg-black/60 shadow-xl ring-1 ring-gold-500/30 group">
-                  <video
-                    src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000089296%20-%20herminal.com%20compressed.webm"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    controls
-                    className="block aspect-[9/16] w-full object-contain"
-                  >
-                    مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-                  </video>
-                </div>
-              </div>
-            </div>
-
+        <div className="container relative z-20 mx-auto px-4 my-auto">
+          {/* نوار بالای بنر شامل دکمه سرچ شیشه‌ای */}
+          <div className="flex justify-end mb-8">
+            <button
+              aria-label="جستجو"
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md flex items-center justify-center text-white transition-all duration-200 hover:scale-105"
+            >
+              <Search className="h-4 w-4" />
+            </button>
           </div>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-1 animate-float">
-            <div className="w-7 h-10 rounded-full border-2 border-gold-400/50 flex items-start justify-center p-1 bg-navy-900/40 backdrop-blur-sm">
-              <ChevronDown className="h-4 w-4 text-gold-400 animate-bounce" />
+          {/* محتوای متنی و دکمه‌های شیشه‌ای */}
+          <div className="max-w-2xl mr-auto text-center lg:text-right">
+            <p className="text-xs md:text-sm text-gold-400 font-semibold mb-2 tracking-wide">
+              به وب‌سایت رسمی
+            </p>
+
+            <h1 className="mb-4 text-3xl font-black leading-tight tracking-tight md:text-5xl lg:text-6xl text-white">
+              هیأت شطرنج
+              <span className="mt-1 block bg-gradient-to-l from-gold-300 via-gold-400 to-gold-500 bg-clip-text text-transparent">
+                نیشابور
+              </span>
+            </h1>
+
+            <p className="mb-3 text-sm md:text-base text-gold-200/90 font-medium">
+              شطرنج؛ زبان مشترک اندیشه‌ها
+            </p>
+
+            <p className="mb-8 text-xs md:text-sm leading-relaxed text-slate-300 max-w-xl">
+              اینجا جایی است برای علاقه‌مندان شطرنج؛ از مبتدی تا حرفه‌ای، برای یادگیری، رقابت و رشد در کنار هم.
+            </p>
+
+            {/* دکمه‌های شیشه‌ای گرد */}
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+              <Link
+                href="/tournaments"
+                className="btn-gold btn-alive-gold !rounded-full px-8 py-3 font-bold text-sm flex items-center gap-2 shadow-gold/30 hover:shadow-gold/50"
+              >
+                <span>مشاهده مسابقات</span>
+                <Calendar className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href="/news"
+                className="bg-navy-900/60 hover:bg-navy-800/80 text-white border border-white/20 hover:border-gold-400/50 backdrop-blur-md px-7 py-3 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 hover:scale-105"
+              >
+                <span>آخرین اخبار</span>
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
             </div>
-            <span className="text-[11px] text-slate-300 font-medium">به پایین اسکرول کنید</span>
           </div>
         </div>
 
-        {/* انحنای انتهای هدر */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+        {/* انحنای سفید پایین هدر (Wave Cut) */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
           <svg
-            viewBox="0 0 1440 80"
+            viewBox="0 0 1440 70"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="w-full text-[#f3f6f9]"
           >
             <path
-              d="M0 40L48 35C96 30 192 20 288 25C384 30 480 50 576 55C672 60 768 50 864 40C960 30 1056 20 1152 25C1248 30 1344 50 1392 60L1440 70V80H0V40Z"
+              d="M0 35C240 70 480 70 720 35C960 0 1200 0 1440 35V70H0V35Z"
               fill="currentColor"
             />
           </svg>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 -mt-8 relative z-20 space-y-12">
-        
-        {/* 2. نوار دسترسی سریع شناور */}
-        <div className="bg-white rounded-2xl p-3 shadow-soft border border-slate-200/80 flex items-center justify-between overflow-x-auto gap-3 scrollbar-none">
-          <div className="bg-navy-950 text-white px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap shrink-0 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-gold-400" />
-            <span>دسترسی سریع</span>
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto w-full">
-            <Link href="/about" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-slate-100 text-navy-900 transition-colors text-xs font-bold whitespace-nowrap border border-transparent hover:border-slate-200">
-              <Info className="h-4 w-4 text-gold-600" />
-              <span>معرفی هیأت و باشگاه</span>
-            </Link>
-
-            <Link href="/tournaments" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-slate-100 text-navy-900 transition-colors text-xs font-bold whitespace-nowrap border border-transparent hover:border-slate-200">
-              <BookOpen className="h-4 w-4 text-turquoise-600" />
-              <span>آموزش شطرنج</span>
-            </Link>
-
-            <Link href="/players" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-slate-100 text-navy-900 transition-colors text-xs font-bold whitespace-nowrap border border-transparent hover:border-slate-200">
-              <Users className="h-4 w-4 text-navy-700" />
-              <span>رده‌بندی بازیکنان</span>
-            </Link>
-
-            <Link href="/tournaments" className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-slate-100 text-navy-900 transition-colors text-xs font-bold whitespace-nowrap border border-transparent hover:border-slate-200">
-              <Trophy className="h-4 w-4 text-gold-600" />
-              <span>مسابقات و نتائج</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* 3. اخبار، اطلاعیه‌ها و بنر نقل‌قول */}
+      {/* 2. بخش اصلی محتوا: اخبار، اطلاعیه‌ها و بنر نقل‌قول */}
+      <div className="container mx-auto px-4 pt-8 space-y-10">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
+          {/* سمت راست (3 ستون): اخبار و اطلاعیه‌ها */}
           <div className="lg:col-span-3 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
               <h2 className="text-xl font-black text-navy-950 flex items-center gap-2">
@@ -226,6 +173,7 @@ export default async function HomePage() {
               <NewsSlider items={news} />
             )}
 
+            {/* اطلاعیه‌ها */}
             {announcements.length > 0 && (
               <div className="pt-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
@@ -259,6 +207,7 @@ export default async function HomePage() {
             )}
           </div>
 
+          {/* سمت چپ (1 ستون): بنر سرمه‌ای نقل‌قول (دقیقاً مطابق طرح) */}
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 rounded-2xl p-6 text-white shadow-xl border border-gold-500/20 relative overflow-hidden flex flex-col justify-between h-full min-h-[320px]">
               <div>
@@ -277,7 +226,6 @@ export default async function HomePage() {
           </div>
 
         </div>
-
       </div>
     </div>
   );
