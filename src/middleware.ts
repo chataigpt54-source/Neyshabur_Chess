@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  // اگر خواستید خودتان با آی‌پی یا یک مسیر خاص سایت را ببینید، می‌توانید استثنا قائل شوید
-  const maintenanceMode = true; // بعد از اتمام کار، این را روی false بگذارید
+export function middleware() {
+  const maintenanceMode = true; // برای فعال‌سازی حالت تعمیر روی true و برای غیرفعال‌سازی روی false بگذارید
 
   if (maintenanceMode) {
     return new NextResponse(
@@ -12,18 +10,22 @@ export function middleware(request: NextRequest) {
       <html lang="fa" dir="rtl">
         <head>
           <meta charset="UTF-8">
-          <title>به‌زودی برمی‌گردیم | هیأت شطرنج نیشابور</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>سایت در حال به‌روزرسانی است | هیأت شطرنج نیشابور</title>
           <style>
-            body { font-family: Tahoma, sans-serif; background: #0a1220; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; text-align: center; }
-            .box { max-width: 500px; padding: 30px; border: 1px solid rgba(212,160,23,0.3); border-radius: 20px; background: rgba(15,27,43,0.8); }
-            h1 { color: #d4a017; margin-bottom: 15px; }
-            p { color: #94a3b8; line-height: 1.6; }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: Tahoma, Vazirmatn, sans-serif; background: #0a1220; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; text-align: center; }
+            .box { max-width: 500px; width: 100%; padding: 40px 30px; border: 1px solid rgba(212,160,23,0.3); border-radius: 24px; background: rgba(15,27,43,0.9); box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+            .icon { font-size: 48px; margin-bottom: 20px; display: block; }
+            h1 { color: #d4a017; font-size: 22px; margin-bottom: 16px; font-weight: bold; }
+            p { color: #94a3b8; font-size: 14px; line-height: 1.8; }
           </style>
         </head>
         <body>
           <div class="box">
+            <span class="icon">♟️</span>
             <h1>سایت در حال به‌روزرسانی است</h1>
-            <p>سایت هیأت شطرنج شهرستان نیشابور برای ارتقای سیستم در حال به‌روزرسانی است. لطفاً دقایقی دیگر مراجعه فرمایید.</p>
+            <p>وب‌سایت رسمی هیأت شطرنج شهرستان نیشابور جهت ارتقا و بهبود خدمات در حال به‌روزرسانی می‌باشد. لطفاً شکیبا باشید، به‌زودی برمی‌گردیم.</p>
           </div>
         </body>
       </html>
