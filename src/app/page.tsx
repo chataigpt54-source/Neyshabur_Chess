@@ -72,7 +72,8 @@ export default async function HomePage() {
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-gradient-to-bl from-navy-900 via-navy-800 to-turquoise-800 text-white">
         <div className="container relative z-10 mx-auto px-4 py-16 md:py-24">
-          <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16">
+          <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-12">
+            {/* Introduction */}
             <div className="max-w-3xl flex-1 text-center lg:text-right">
               <div className="mb-6 inline-flex animate-fade-in items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm text-gold-300 backdrop-blur-sm">
                 <Trophy className="h-4 w-4" />
@@ -116,21 +117,40 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Video */}
-            <div className="w-full max-w-[320px] flex-shrink-0 animate-fade-in md:max-w-[380px] lg:max-w-[420px]">
-              <div className="overflow-hidden rounded-2xl bg-black/40 shadow-2xl ring-2 ring-white/20">
-                <video
-                  src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000087731%20-%20herminal.com%20compressed.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
-                  controls
-                  className="block h-auto w-full"
-                >
-                  مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-                </video>
+            {/* Videos: Landscape + Portrait */}
+            <div className="w-full max-w-[620px] flex-shrink-0 animate-fade-in lg:w-[52%]">
+              <div className="grid grid-cols-2 items-center gap-3 sm:gap-4">
+                {/* Original Landscape Video */}
+                <div className="min-w-0 overflow-hidden rounded-2xl bg-black/40 shadow-2xl ring-2 ring-white/20">
+                  <video
+                    src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000087731%20-%20herminal.com%20compressed.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    controls
+                    className="block aspect-video w-full object-contain"
+                  >
+                    مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                  </video>
+                </div>
+
+                {/* New Portrait Video */}
+                <div className="min-w-0 overflow-hidden rounded-2xl bg-black/40 shadow-2xl ring-2 ring-white/20">
+                  <video
+                    src="https://rykupd7voq6bakre.public.blob.vercel-storage.com/1000089296%20-%20herminal.com%20compressed.webm"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    controls
+                    className="block aspect-[9/16] w-full object-contain"
+                  >
+                    مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
+                  </video>
+                </div>
               </div>
             </div>
           </div>
