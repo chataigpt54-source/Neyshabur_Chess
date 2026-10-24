@@ -1,14 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f1b2b;
+  --background: #f3f6f9;
+  --foreground: #0a1220;
   --turquoise: #319795;
-  --navy: #1e3a5f;
+  --navy: #0a1220;
+  --navy-card: #0f1b2b;
   --gold: #d4a017;
 }
 
@@ -29,33 +30,42 @@ body {
   direction: rtl;
   text-align: right;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 @layer components {
+  /* دکمه‌های زنده و شیک */
   .btn-primary {
-    @apply bg-turquoise-600 hover:bg-turquoise-700 text-white font-medium py-2.5 px-6 rounded-xl 
+    @apply bg-turquoise-600 hover:bg-turquoise-500 text-white font-medium py-3 px-6 rounded-xl 
            transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5
-           active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+           active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
   }
 
   .btn-secondary {
-    @apply bg-navy-500 hover:bg-navy-600 text-white font-medium py-2.5 px-6 rounded-xl 
-           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5;
+    @apply bg-navy-900 hover:bg-navy-800 text-white font-medium py-3 px-6 rounded-xl 
+           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5
+           border border-navy-700/50 flex items-center justify-center gap-2;
   }
 
   .btn-gold {
-    @apply bg-gold-500 hover:bg-gold-600 text-navy-900 font-semibold py-2.5 px-6 rounded-xl 
-           transition-all duration-300 shadow-gold hover:shadow-lg hover:-translate-y-0.5;
+    @apply bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-navy-950 font-bold py-3 px-7 rounded-full 
+           transition-all duration-300 shadow-gold hover:shadow-xl hover:scale-105 active:scale-95
+           flex items-center justify-center gap-2 border border-gold-300/40;
   }
 
   .btn-outline {
-    @apply border-2 border-turquoise-600 text-turquoise-700 hover:bg-turquoise-50 font-medium 
-           py-2 px-5 rounded-xl transition-all duration-300;
+    @apply border-2 border-turquoise-600/40 text-turquoise-400 hover:border-turquoise-500 hover:bg-turquoise-500/10 font-medium 
+           py-2.5 px-5 rounded-xl transition-all duration-300 backdrop-blur-md;
   }
 
+  /* کارت‌ها و کادرهای مدرن */
   .card {
     @apply bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 
-           border border-slate-100 overflow-hidden;
+           border border-slate-100/80 overflow-hidden hover:-translate-y-1;
+  }
+
+  .card-dark {
+    @apply bg-navy-900/90 backdrop-blur-md rounded-2xl border border-navy-700/60 shadow-soft-lg text-white;
   }
 
   .input-field {
@@ -65,12 +75,12 @@ body {
   }
 
   .section-title {
-    @apply text-2xl md:text-3xl font-bold text-navy-800 relative inline-block mb-8;
+    @apply text-2xl md:text-3xl font-black text-navy-900 relative inline-block mb-8 pb-3;
   }
 
   .section-title::after {
     content: '';
-    @apply absolute bottom-0 right-0 w-1/2 h-1 bg-gradient-to-l from-turquoise-500 to-gold-400 rounded-full;
+    @apply absolute bottom-0 right-0 w-2/3 h-1 bg-gradient-to-l from-gold-500 via-turquoise-500 to-transparent rounded-full;
   }
 
   .skeleton {
@@ -78,24 +88,39 @@ body {
   }
 }
 
-/* Custom scrollbar */
+/* اسکرول‌بار اختصاصی و لوکس سرمه‌ای/طلایی */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0a1220;
 }
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: #1e3a5f;
   border-radius: 4px;
+  border: 1px solid rgba(212, 160, 23, 0.25);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #d4a017;
 }
 
-/* Selection */
+/* هایلایت متن‌ها */
 ::selection {
-  background: #4fd1c5;
-  color: #0f1b2b;
+  background: #d4a017;
+  color: #0a1220;
+}
+
+/* انیمیشن پالس درخشان برای دکمه‌های زنده */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(212, 160, 23, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(212, 160, 23, 0.7);
+  }
+}
+
+.btn-alive-gold {
+  animation: pulseGlow 3s infinite;
 }
