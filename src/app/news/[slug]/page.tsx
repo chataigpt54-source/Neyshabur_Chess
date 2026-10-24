@@ -1,34 +1,67 @@
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 60;
 
 async function getNewsItem(slug: string) {
   try {
     const supabase = createServerClient();
-    const { data } = await supabase
+
+    // ابتدا جست‌وجو با slug
+    const { data: slugData, error: slugError } = await supabase
       .from('news')
       .select('*')
       .eq('slug', slug)
       .eq('published', true)
-      .single();
-    return data;
-  } catch {
+      .maybeSingle();
+
+    if (!slugError && slugData) {
+      return slugData;
+    }
+
+    // اگر با slug پیدا نشد، جست‌وجو با UUID
+    const { data: idData, error: idError } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', slug)
+      .eq('published', true)
+      .maybeSingle();
+
+    if (!idError && idData) {
+      return idData;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error fetching news:', error);
     return null;
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const item = await getNewsItem(params.slug);
-  return { title: item?.title || 'خبر' };
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const item = await getNewsItem(slug);
+
+  return {
+    title: item?.title || 'خبر',
+    description: item?.content?.slice(0, 160) || 'اخبار هیأت شطرنج شهرستان نیشابور',
+  };
 }
 
-export default async function NewsDetailPage({ params }: { params: { slug: string } }) {
-  const item = await getNewsItem(params.slug);
-  if (!item) notFound();
+export default async function NewsDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const item = await getNewsItem(slug);
+
+  if (!item) {
+    notFound();
+  }
 
   return (
     <article className="container mx-auto px-4 py-12 max-w-4xl">
@@ -41,7 +74,10 @@ export default async function NewsDetailPage({ params }: { params: { slug: strin
       </Link>
 
       <header className="mb-8">
-        <time className="text-sm text-slate-400">{formatDate(item.published_at)}</time>
+        <time className="text-sm text-slate-400">
+          {formatDate(item.published_at)}
+        </time>
+
         <h1 className="text-3xl md:text-4xl font-bold text-navy-800 mt-2 leading-tight">
           {item.title}
         </h1>
