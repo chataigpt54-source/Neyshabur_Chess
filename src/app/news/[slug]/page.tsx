@@ -12,46 +12,22 @@ type PageProps = {
   }>;
 };
 
-async function getNewsItem(slug: string) {
+async function getNewsItem(id: string) {
   try {
     const supabase = createServerClient();
 
-    // 1. جست‌وجوی دقیق با slug
-    const { data: bySlug, error: slugError } = await supabase
+    const { data, error } = await supabase
       .from('news')
       .select('*')
-      .eq('slug', slug)
+      .eq('id', id)
       .maybeSingle();
 
-    if (!slugError && bySlug) {
-      return bySlug;
+    if (error) {
+      console.error('Error fetching news:', error);
+      return null;
     }
 
-    // 2. جست‌وجوی دقیق با شناسه UUID
-    const { data: byId, error: idError } = await supabase
-      .from('news')
-      .select('*')
-      .eq('id', slug)
-      .maybeSingle();
-
-    if (!idError && byId) {
-      return byId;
-    }
-
-    // 3. جست‌وجو با انتهای slug
-    // برای لینک‌هایی که پسوند کوتاه لاتین دارند
-    const { data: bySuffix, error: suffixError } = await supabase
-      .from('news')
-      .select('*')
-      .like('slug', `%${slug}`)
-      .limit(2);
-
-    if (!suffixError && bySuffix && bySuffix.length === 1) {
-      return bySuffix[0];
-    }
-
-    // اگر چند خبر با این الگو پیدا شوند، خبر اشتباهی نمایش نده
-    return null;
+    return data;
   } catch (error) {
     console.error('Error fetching news:', error);
     return null;
@@ -72,6 +48,8 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function NewsDetailPage({ params }: PageProps) {
   const { slug } = await params;
+
+  // مقدار مسیر فقط شناسه خبر است؛ هیچ جست‌وجویی با slug انجام نمی‌شود.
   const item = await getNewsItem(slug);
 
   if (!item) {
