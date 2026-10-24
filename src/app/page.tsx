@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import {
@@ -7,6 +8,7 @@ import {
   Clock,
   Calendar,
   ArrowUpLeft,
+  BookOpen,
 } from 'lucide-react';
 import NewsSlider from '@/components/NewsSlider';
 import type { Announcement } from '@/types/database';
@@ -59,7 +61,7 @@ export default async function HomePage() {
       dir="rtl"
       className="min-h-screen overflow-hidden bg-[#f3f6f9] text-[#0b2342]"
     >
-      {/* Hero: video background */}
+      {/* بخش اصلی با ویدئوی پس‌زمینه */}
       <section className="hero-video relative isolate flex min-h-[520px] items-center overflow-hidden bg-[#071a32] py-16 text-white md:min-h-[590px]">
         <div className="absolute inset-0 -z-30">
           <video
@@ -74,11 +76,10 @@ export default async function HomePage() {
           />
         </div>
 
-        {/* Keep the actual video visible under the navy overlay */}
         <div className="absolute inset-0 -z-20 bg-gradient-to-l from-[#06172d]/90 via-[#071c36]/55 to-[#06172d]/30" />
         <div className="hero-vignette absolute inset-0 -z-10" />
 
-        {/* Geometric triangular decoration */}
+        {/* تزئینات هندسی */}
         <div
           aria-hidden="true"
           className="hero-triangle hero-triangle-one pointer-events-none absolute -left-24 -top-24 h-[340px] w-[340px] rotate-[30deg] border border-white/20 bg-gradient-to-br from-white/20 via-white/5 to-transparent backdrop-blur-[2px]"
@@ -88,7 +89,6 @@ export default async function HomePage() {
           className="hero-triangle hero-triangle-two pointer-events-none absolute -left-32 top-36 h-[250px] w-[250px] rotate-[30deg] border border-white/15 bg-gradient-to-br from-white/15 to-transparent"
         />
 
-        {/* Subtle golden light lines */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#06172d]/80 to-transparent"
@@ -100,7 +100,7 @@ export default async function HomePage() {
 
         <div className="container relative mx-auto px-5 md:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* Visual side: no chess-piece illustration or extra buttons */}
+            {/* تزئینات بصری */}
             <div className="hero-visual order-2 hidden min-h-[280px] lg:block">
               <div className="relative h-[310px]">
                 <div className="hero-glass-panel absolute bottom-2 left-3 h-40 w-64 rounded-3xl border border-white/20 bg-white/[0.06] backdrop-blur-md" />
@@ -109,7 +109,7 @@ export default async function HomePage() {
                 <div className="absolute bottom-8 left-12 max-w-52 rounded-2xl border border-white/15 bg-[#071a32]/45 p-5 backdrop-blur-md">
                   <p className="text-sm font-bold text-white">شهر نیشابور</p>
                   <p className="mt-2 text-xs leading-6 text-slate-300">
-                    شهری با تاریخ، فرهنگ و اندیشه
+                    زادگاه اندیشه، فرهنگ و حکمت
                   </p>
                 </div>
                 <div className="absolute right-4 top-10 h-32 w-32 rotate-45 border border-[#edc66f]/30" />
@@ -117,7 +117,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Main text */}
+            {/* عنوان و معرفی */}
             <div className="hero-copy relative z-10 mx-auto w-full max-w-2xl text-center lg:order-2 lg:mx-0 lg:text-right">
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.07] px-4 py-2 text-xs font-semibold text-[#f3d58f] backdrop-blur-md">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#edc66f]" />
@@ -162,7 +162,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* Curved transition into the existing light background */}
+        {/* اتصال منحنی به بخش روشن */}
         <div className="pointer-events-none absolute bottom-0 left-0 right-0">
           <svg
             viewBox="0 0 1440 65"
@@ -178,7 +178,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* News and announcements */}
+      {/* اخبار و اطلاعیه‌ها */}
       <section className="container mx-auto space-y-10 px-4 py-10 md:px-8 md:py-14">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
           <div className="min-w-0 space-y-6 lg:col-span-3">
@@ -257,31 +257,49 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* Quote card */}
-          <aside className="quote-card relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-3xl border border-[#edc66f]/20 bg-gradient-to-br from-[#102b4b] via-[#0b2342] to-[#071a32] p-7 text-white shadow-xl lg:col-span-1">
-            <div className="quote-decoration pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full border border-white/10" />
-            <div className="quote-decoration pointer-events-none absolute -bottom-5 -left-3 h-32 w-32 rounded-full border border-[#edc66f]/20" />
+          {/* کارت شعر عطار نیشابوری */}
+          <aside className="quote-card relative flex min-h-[350px] flex-col justify-between overflow-hidden rounded-3xl border border-[#edc66f]/20 bg-gradient-to-br from-[#102b4b] via-[#0b2342] to-[#071a32] p-7 text-white shadow-xl lg:col-span-1">
+            <div
+              aria-hidden="true"
+              className="quote-decoration pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full border border-white/10"
+            />
+            <div
+              aria-hidden="true"
+              className="quote-decoration pointer-events-none absolute -bottom-5 -left-3 h-32 w-32 rounded-full border border-[#edc66f]/20"
+            />
 
             <div className="relative">
-              <span className="mb-2 block text-4xl font-black text-[#edc66f]">
+              <div className="mb-4 flex items-center gap-2 text-xs font-bold text-[#edc66f]">
+                <BookOpen className="h-4 w-4" />
+                گنجینهٔ ادب نیشابور
+              </div>
+
+              <span className="block text-4xl font-black leading-none text-[#edc66f]">
                 «
               </span>
-              <h3 className="text-xl font-black leading-9">
-                هر حرکت،
+
+              <blockquote className="mt-2 text-base font-bold leading-9 sm:text-lg">
+                چنین گفت این جهان پُر غم و رنج
                 <br />
-                یک قدم عمق است
-              </h3>
-              <div className="mt-4 h-1 w-12 rounded-full bg-[#edc66f]" />
+                به عینه آیدم چون نطعِ شطرنج
+              </blockquote>
+
+              <div className="mt-5 h-1 w-12 rounded-full bg-[#edc66f]" />
             </div>
 
-            <p className="relative mt-8 border-t border-white/10 pt-4 text-xs font-medium leading-7 text-slate-300">
-              توسعه تفکر استراتژیک و هوش محاسباتی در هیأت شطرنج شهرستان
-              نیشابور.
-            </p>
+            <div className="relative mt-8 border-t border-white/10 pt-4">
+              <p className="text-sm font-extrabold text-white">
+                عطار نیشابوری
+              </p>
+              <p className="mt-1 text-xs leading-6 text-slate-300">
+                برگرفته از الهی‌نامه
+              </p>
+            </div>
           </aside>
         </div>
       </section>
 
+      {/* انیمیشن‌های اختصاصی صفحه */}
       <style>{`
         .hero-video {
           isolation: isolate;
@@ -295,7 +313,6 @@ export default async function HomePage() {
 
         .hero-triangle {
           clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-          transition: transform .8s cubic-bezier(.2,.8,.2,1);
         }
 
         .hero-triangle-one {
@@ -381,7 +398,7 @@ export default async function HomePage() {
         }
 
         .link-alive {
-          transition: color .25s ease, gap .25s ease;
+          transition: color .25s ease;
         }
 
         .link-alive:hover {
@@ -468,6 +485,12 @@ export default async function HomePage() {
         @keyframes content-enter {
           from { opacity: 0; transform: translateY(14px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+          .hero-title-accent {
+            margin-inline: auto;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
