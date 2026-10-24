@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -11,6 +12,12 @@
   --navy: #0a1220;
   --navy-card: #0f1b2b;
   --gold: #d4a017;
+
+  --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-border: rgba(10, 18, 32, 0.08);
+  --ui-gold-glow: 0 8px 28px rgba(212, 160, 23, 0.2);
+  --ui-shadow: 0 10px 30px rgba(10, 18, 32, 0.07);
+  --ui-shadow-hover: 0 18px 45px rgba(10, 18, 32, 0.13);
 }
 
 * {
@@ -21,6 +28,8 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -31,56 +40,138 @@ body {
   text-align: right;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font-size: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(49, 151, 149, 0.65);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--navy);
 }
 
 @layer components {
-  /* دکمه‌های زنده و شیک */
+  /* دکمه اصلی */
   .btn-primary {
-    @apply bg-turquoise-600 hover:bg-turquoise-500 text-white font-medium py-3 px-6 rounded-xl 
-           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5
-           active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+    @apply relative overflow-hidden bg-turquoise-600 hover:bg-turquoise-500
+      text-white font-bold py-3 px-6 rounded-xl
+      transition-all duration-300 shadow-soft hover:shadow-soft-lg
+      hover:-translate-y-1 active:translate-y-0
+      disabled:opacity-50 disabled:cursor-not-allowed
+      flex items-center justify-center gap-2;
   }
 
+  /* دکمه تیره */
   .btn-secondary {
-    @apply bg-navy-900 hover:bg-navy-800 text-white font-medium py-3 px-6 rounded-xl 
-           transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5
-           border border-navy-700/50 flex items-center justify-center gap-2;
+    @apply relative overflow-hidden bg-navy-900 hover:bg-navy-800
+      text-white font-bold py-3 px-6 rounded-xl
+      transition-all duration-300 shadow-soft hover:shadow-soft-lg
+      hover:-translate-y-1 active:translate-y-0
+      border border-navy-700/50
+      flex items-center justify-center gap-2;
   }
 
+  /* دکمه طلایی */
   .btn-gold {
-    @apply bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600 text-navy-950 font-bold py-3 px-7 rounded-full 
-           transition-all duration-300 shadow-gold hover:shadow-xl hover:scale-105 active:scale-95
-           flex items-center justify-center gap-2 border border-gold-300/40;
+    @apply relative overflow-hidden
+      bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600
+      text-navy-950 font-bold py-3 px-7 rounded-full
+      transition-all duration-300 shadow-gold hover:shadow-xl
+      hover:scale-[1.03] active:scale-[0.98]
+      flex items-center justify-center gap-2
+      border border-gold-300/40;
   }
 
+  /* دکمه دورخط */
   .btn-outline {
-    @apply border-2 border-turquoise-600/40 text-turquoise-400 hover:border-turquoise-500 hover:bg-turquoise-500/10 font-medium 
-           py-2.5 px-5 rounded-xl transition-all duration-300 backdrop-blur-md;
+    @apply relative border-2 border-turquoise-600/40
+      text-turquoise-600 hover:border-turquoise-500
+      hover:bg-turquoise-500/10 font-bold
+      py-2.5 px-5 rounded-xl transition-all duration-300
+      backdrop-blur-md;
   }
 
-  /* کارت‌ها و کادرهای مدرن */
+  /* کارت عمومی */
   .card {
-    @apply bg-white rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 
-           border border-slate-100/80 overflow-hidden hover:-translate-y-1;
+    @apply bg-white rounded-2xl shadow-soft
+      hover:shadow-soft-lg transition-all duration-300
+      border border-slate-100/80 overflow-hidden;
   }
 
   .card-dark {
-    @apply bg-navy-900/90 backdrop-blur-md rounded-2xl border border-navy-700/60 shadow-soft-lg text-white;
+    @apply bg-navy-900/90 backdrop-blur-md rounded-2xl
+      border border-navy-700/60 shadow-soft-lg text-white;
   }
 
+  /* ورودی‌ها */
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-turquoise-500 
-           focus:ring-2 focus:ring-turquoise-200 outline-none transition-all duration-200
-           bg-white text-navy-900 placeholder:text-slate-400;
+    @apply w-full px-4 py-3 rounded-xl
+      border border-slate-200
+      focus:border-turquoise-500 focus:ring-2
+      focus:ring-turquoise-200 outline-none
+      transition-all duration-200
+      bg-white text-navy-900 placeholder:text-slate-400;
   }
 
+  /* عنوان بخش */
   .section-title {
-    @apply text-2xl md:text-3xl font-black text-navy-900 relative inline-block mb-8 pb-3;
+    @apply text-2xl md:text-3xl font-black
+      text-navy-900 relative inline-block mb-8 pb-3;
   }
 
   .section-title::after {
     content: '';
-    @apply absolute bottom-0 right-0 w-2/3 h-1 bg-gradient-to-l from-gold-500 via-turquoise-500 to-transparent rounded-full;
+    @apply absolute bottom-0 right-0 w-2/3 h-1
+      bg-gradient-to-l from-gold-500 via-turquoise-500
+      to-transparent rounded-full;
+    transform-origin: right;
+    transition: width 350ms var(--ui-ease);
+  }
+
+  .section-title:hover::after {
+    width: 100%;
   }
 
   .skeleton {
@@ -88,39 +179,795 @@ body {
   }
 }
 
-/* اسکرول‌بار اختصاصی و لوکس سرمه‌ای/طلایی */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* =========================================
+   دکمه‌ها: بازخورد لمسی و افکت نور
+   ========================================= */
+
+.btn-primary,
+.btn-secondary,
+.btn-gold,
+.btn-outline {
+  transform: translateZ(0);
+  transition:
+    transform 260ms var(--ui-ease),
+    box-shadow 260ms var(--ui-ease),
+    background-color 260ms ease,
+    border-color 260ms ease,
+    color 260ms ease;
 }
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-outline:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ui-shadow-hover);
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-gold:active,
+.btn-outline:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-gold {
+  isolation: isolate;
+}
+
+.btn-primary::before,
+.btn-secondary::before,
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+  transform: rotate(18deg);
+  transition: left 650ms var(--ui-ease);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.btn-primary:hover::before,
+.btn-secondary:hover::before,
+.btn-gold:hover::before {
+  left: 140%;
+}
+
+.btn-gold {
+  box-shadow: var(--ui-gold-glow);
+}
+
+/* =========================================
+   کارت‌ها
+   ========================================= */
+
+.card {
+  box-shadow: var(--ui-shadow);
+  transition:
+    transform 350ms var(--ui-ease),
+    box-shadow 350ms var(--ui-ease),
+    border-color 350ms ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--ui-shadow-hover);
+  border-color: rgba(49, 151, 149, 0.2);
+}
+
+.card img {
+  transition: transform 600ms var(--ui-ease);
+}
+
+.card:hover img {
+  transform: scale(1.035);
+}
+
+/* =========================================
+   عنوان بخش‌ها
+   ========================================= */
+
+.section-title {
+  letter-spacing: -0.035em;
+}
+
+.section-title::after {
+  box-shadow: 0 2px 12px rgba(49, 151, 149, 0.15);
+}
+
+/* =========================================
+   اسکرول‌بار اختصاصی
+   ========================================= */
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #1e3a5f #0a1220;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
 ::-webkit-scrollbar-track {
   background: #0a1220;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1e3a5f;
-  border-radius: 4px;
-  border: 1px solid rgba(212, 160, 23, 0.25);
+  background: linear-gradient(180deg, #319795, #1e3a5f);
+  border-radius: 999px;
+  border: 2px solid #0a1220;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #d4a017;
 }
 
-/* هایلایت متن‌ها */
-::selection {
+/* =========================================
+   اسلایدر خبرها
+   ========================================= */
+
+.news-slider {
+  isolation: isolate;
+  padding-bottom: 4px;
+}
+
+.news-slider-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #fff;
+  border: 1px solid rgba(10, 18, 32, 0.07);
+  box-shadow: 0 14px 45px rgba(10, 18, 32, 0.09);
+  transition:
+    transform 400ms var(--ui-ease),
+    box-shadow 400ms var(--ui-ease),
+    border-color 300ms ease;
+}
+
+.news-slider-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 65px rgba(10, 18, 32, 0.15);
+  border-color: rgba(49, 151, 149, 0.22);
+}
+
+.news-slider-link {
+  display: block;
+  color: inherit;
+  outline-offset: -4px;
+}
+
+.news-slider-media {
+  position: relative;
+  aspect-ratio: 16 / 8.5;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(212, 160, 23, 0.2),
+      transparent 35%
+    ),
+    linear-gradient(135deg, #0a1220, #173b50 65%, #319795);
+}
+
+.news-slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 800ms var(--ui-ease);
+}
+
+.news-slider-card:hover .news-slider-image {
+  transform: scale(1.045);
+}
+
+.news-slider-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(49, 151, 149, 0.3),
+      transparent 45%
+    ),
+    linear-gradient(135deg, #0a1220, #173b50);
+}
+
+.news-slider-placeholder-icon {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  color: #d4a017;
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 28px;
+  box-shadow: 0 0 45px rgba(212, 160, 23, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.news-slider-placeholder span {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.news-slider-image-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 18, 32, 0.34) 0%,
+    transparent 35%,
+    transparent 55%,
+    rgba(10, 18, 32, 0.68) 100%
+  );
+}
+
+.news-slider-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(10, 18, 32, 0.64);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+}
+
+.news-slider-badge svg {
+  color: #d4a017;
+}
+
+.news-slider-image-caption {
+  position: absolute;
+  right: 22px;
+  bottom: 19px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.news-slider-caption-line {
+  display: block;
+  width: 25px;
+  height: 2px;
   background: #d4a017;
+  border-radius: 99px;
+}
+
+.news-slider-body {
+  padding: 24px 26px 20px;
+}
+
+.news-slider-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.news-slider-category,
+.news-slider-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.news-slider-category {
+  color: #247d7b;
+}
+
+.news-slider-category-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #319795;
+  box-shadow: 0 0 0 4px rgba(49, 151, 149, 0.11);
+}
+
+.news-slider-date {
+  color: #778394;
+}
+
+.news-slider-title {
   color: #0a1220;
+  font-size: clamp(19px, 2.2vw, 25px);
+  font-weight: 900;
+  line-height: 1.9;
+  letter-spacing: -0.035em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  transition: color 250ms ease;
 }
 
-/* انیمیشن پالس درخشان برای دکمه‌های زنده */
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(212, 160, 23, 0.3);
+.news-slider-card:hover .news-slider-title {
+  color: #247d7b;
+}
+
+.news-slider-description {
+  margin-top: 10px;
+  color: #687486;
+  font-size: 14px;
+  line-height: 2.1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.news-slider-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 21px;
+  padding-top: 17px;
+  border-top: 1px solid rgba(10, 18, 32, 0.07);
+}
+
+.news-slider-readmore {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #247d7b;
+  font-size: 13px;
+  font-weight: 800;
+  transition: gap 250ms var(--ui-ease), color 250ms ease;
+}
+
+.news-slider-card:hover .news-slider-readmore {
+  gap: 13px;
+  color: #0a6967;
+}
+
+.news-slider-readmore svg {
+  transition: transform 250ms var(--ui-ease);
+}
+
+.news-slider-card:hover .news-slider-readmore svg {
+  transform: translateX(-2px);
+}
+
+.news-slider-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #98a2b0;
+  direction: ltr;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.news-slider-counter strong {
+  color: #0a1220;
+  font-size: 16px;
+}
+
+.news-slider-nav {
+  position: absolute;
+  top: 31%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #fff;
+  background: rgba(10, 18, 32, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 15px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%) scale(0.9);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 20px rgba(10, 18, 32, 0.18);
+  transition:
+    opacity 250ms ease,
+    transform 250ms var(--ui-ease),
+    background 250ms ease,
+    border-color 250ms ease;
+}
+
+.news-slider-prev {
+  right: 16px;
+}
+
+.news-slider-next {
+  left: 16px;
+}
+
+.news-slider:hover .news-slider-nav,
+.news-slider:focus-within .news-slider-nav {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.news-slider-nav:hover {
+  color: #0a1220;
+  background: #d4a017;
+  border-color: #d4a017;
+}
+
+.news-slider-nav:active {
+  transform: translateY(-50%) scale(0.93);
+}
+
+.news-slider-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  height: 3px;
+  overflow: hidden;
+  background: rgba(49, 151, 149, 0.12);
+  border-radius: 0 0 26px 26px;
+}
+
+.news-slider-progress-bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #d4a017, #319795);
+  transform-origin: right;
+  animation-name: newsProgress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes newsProgress {
+  from {
+    transform: scaleX(1);
   }
-  50% {
-    box-shadow: 0 0 25px rgba(212, 160, 23, 0.7);
+
+  to {
+    transform: scaleX(0);
   }
 }
 
+.news-slider-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 17px 8px 0;
+}
+
+.news-slider-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.news-slider-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #cbd3dc;
+  cursor: pointer;
+  transition:
+    width 300ms var(--ui-ease),
+    background 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.news-slider-dot:hover {
+  background: #319795;
+}
+
+.news-slider-dot.is-active {
+  width: 26px;
+  background: #319795;
+  box-shadow: 0 2px 8px rgba(49, 151, 149, 0.25);
+}
+
+.news-slider-pagination-label {
+  color: #8792a1;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.news-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 45px 24px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid rgba(10, 18, 32, 0.07);
+  border-radius: 24px;
+  box-shadow: var(--ui-shadow);
+}
+
+.news-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 17px;
+  color: #319795;
+  background: rgba(49, 151, 149, 0.1);
+  border-radius: 22px;
+}
+
+.news-empty h3 {
+  color: #0a1220;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.news-empty p {
+  margin-top: 8px;
+  color: #778394;
+  font-size: 13px;
+  line-height: 2;
+}
+
+/* =========================================
+   ویدئو و بخش قهرمان صفحه
+   ========================================= */
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 18, 32, 0.88),
+    rgba(10, 18, 32, 0.42) 55%,
+    rgba(49, 151, 149, 0.2)
+  );
+}
+
+/* =========================================
+   کارت‌های اطلاعیه
+   ========================================= */
+
+.announcement-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(10, 18, 32, 0.07);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--ui-shadow);
+  transition:
+    transform 300ms var(--ui-ease),
+    box-shadow 300ms var(--ui-ease),
+    border-color 300ms ease;
+}
+
+.announcement-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(49, 151, 149, 0.25);
+  box-shadow: var(--ui-shadow-hover);
+}
+
+.announcement-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #d4a017, #319795);
+  transform: scaleY(0.35);
+  transform-origin: center;
+  transition: transform 300ms var(--ui-ease);
+}
+
+.announcement-card:hover::before {
+  transform: scaleY(1);
+}
+
+/* =========================================
+   انیمیشن ورود ملایم
+   ========================================= */
+
+@keyframes uiEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ui-enter {
+  animation: uiEnter 650ms var(--ui-ease) both;
+}
+
+.ui-enter-delay-1 {
+  animation-delay: 100ms;
+}
+
+.ui-enter-delay-2 {
+  animation-delay: 200ms;
+}
+
+.ui-enter-delay-3 {
+  animation-delay: 300ms;
+}
+
+/* پالس طلایی فقط هنگام تعامل */
 .btn-alive-gold {
-  animation: pulseGlow 3s infinite;
+  animation: none;
+}
+
+.btn-alive-gold:hover {
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(212, 160, 23, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(212, 160, 23, 0.45);
+  }
+}
+
+/* =========================================
+   نمایشگرهای متوسط و موبایل
+   ========================================= */
+
+@media (max-width: 768px) {
+  .news-slider-card {
+    border-radius: 21px;
+  }
+
+  .news-slider-media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .news-slider-body {
+    padding: 19px 18px 17px;
+  }
+
+  .news-slider-title {
+    font-size: 19px;
+    line-height: 1.85;
+  }
+
+  .news-slider-description {
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .news-slider-nav {
+    top: 28%;
+    width: 39px;
+    height: 39px;
+    opacity: 1;
+    transform: translateY(-50%);
+    border-radius: 13px;
+  }
+
+  .news-slider-prev {
+    right: 10px;
+  }
+
+  .news-slider-next {
+    left: 10px;
+  }
+
+  .news-slider-pagination-label {
+    display: none;
+  }
+
+  .news-slider-badge {
+    top: 12px;
+    right: 12px;
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  .news-slider-image-caption {
+    right: 14px;
+    bottom: 13px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 420px) {
+  .news-slider-body {
+    padding: 16px 14px;
+  }
+
+  .news-slider-meta {
+    gap: 8px;
+  }
+
+  .news-slider-date,
+  .news-slider-category {
+    font-size: 11px;
+  }
+
+  .news-slider-title {
+    font-size: 17px;
+  }
+
+  .news-slider-footer {
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+
+  .news-slider-readmore {
+    font-size: 12px;
+  }
+
+  .news-slider-counter strong {
+    font-size: 14px;
+  }
+
+  .news-slider-placeholder-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 22px;
+  }
+}
+
+/* =========================================
+   احترام به تنظیم کاهش حرکت دستگاه کاربر
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
