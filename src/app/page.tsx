@@ -1,10 +1,8 @@
-
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import {
   Newspaper,
   ArrowLeft,
-  Search,
   Megaphone,
   Clock,
   Calendar,
