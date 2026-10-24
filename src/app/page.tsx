@@ -60,7 +60,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-[#f3f6f9] text-navy-950 pb-12">
+    <div className="min-h-screen bg-[#f3f6f9] text-navy-950 pb-16">
       {/* 1. Hero Banner - بخش اصلی ویدیویی و متنی هدر */}
       <section className="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-white pb-24 pt-10 md:pt-16">
         <div className="absolute top-0 right-1/4 h-96 w-96 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
@@ -276,53 +276,6 @@ export default async function HomePage() {
             </div>
           </div>
 
-        </div>
-
-        {/* 4. فوتر لینک‌های مرتبط همراه با لینک مستقیم فدراسیون شطرنج */}
-        <div className="bg-navy-950 text-white rounded-2xl p-4 shadow-xl border border-navy-800 flex flex-wrap items-center justify-between gap-4 mt-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400 font-bold">
-              🏛️
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-white">نیشابور</h4>
-              <p className="text-[11px] text-slate-400">شهر علم، تاریخ و شطرنج</p>
-            </div>
-          </div>
-
-          {/* لینک‌ها */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-            <a 
-              href="http://www.ircf.ir/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-navy-900 hover:bg-gold-500 hover:text-navy-950 border border-white/10 text-xs font-medium px-4 py-2 rounded-xl transition-all whitespace-nowrap"
-            >
-              سایت فدراسیون ←
-            </a>
-            <Link 
-              href="/about" 
-              className="bg-navy-900 hover:bg-gold-500 hover:text-navy-950 border border-white/10 text-xs font-medium px-4 py-2 rounded-xl transition-all whitespace-nowrap"
-            >
-              سایت شهرستان ←
-            </Link>
-            <a 
-              href="https://t.me/neyshabur_chess" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-navy-900 hover:bg-gold-500 hover:text-navy-950 border border-white/10 text-xs font-medium px-4 py-2 rounded-xl transition-all whitespace-nowrap"
-            >
-              کانال تلگرام ←
-            </a>
-            <a 
-              href="https://instagram.com/neyshabur_chess" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-navy-900 hover:bg-gold-500 hover:text-navy-950 border border-white/10 text-xs font-medium px-4 py-2 rounded-xl transition-all whitespace-nowrap"
-            >
-              اینستاگرام ←
-            </a>
-          </div>
         </div>
 
       </div>
