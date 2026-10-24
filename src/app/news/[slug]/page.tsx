@@ -1,39 +1,56 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
-import { notFound } from 'next/navigation';
 
 export const revalidate = 60;
+
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 async function getNewsItem(slug: string) {
   try {
     const supabase = createServerClient();
 
-    // ابتدا جست‌وجو با slug
-    const { data: slugData, error: slugError } = await supabase
+    // 1. جست‌وجوی دقیق با slug
+    const { data: bySlug, error: slugError } = await supabase
       .from('news')
       .select('*')
       .eq('slug', slug)
-      .eq('published', true)
       .maybeSingle();
 
-    if (!slugError && slugData) {
-      return slugData;
+    if (!slugError && bySlug) {
+      return bySlug;
     }
 
-    // اگر با slug پیدا نشد، جست‌وجو با UUID
-    const { data: idData, error: idError } = await supabase
+    // 2. جست‌وجوی دقیق با شناسه UUID
+    const { data: byId, error: idError } = await supabase
       .from('news')
       .select('*')
       .eq('id', slug)
-      .eq('published', true)
       .maybeSingle();
 
-    if (!idError && idData) {
-      return idData;
+    if (!idError && byId) {
+      return byId;
     }
 
+    // 3. جست‌وجو با انتهای slug
+    // برای لینک‌هایی که پسوند کوتاه لاتین دارند
+    const { data: bySuffix, error: suffixError } = await supabase
+      .from('news')
+      .select('*')
+      .like('slug', `%${slug}`)
+      .limit(2);
+
+    if (!suffixError && bySuffix && bySuffix.length === 1) {
+      return bySuffix[0];
+    }
+
+    // اگر چند خبر با این الگو پیدا شوند، خبر اشتباهی نمایش نده
     return null;
   } catch (error) {
     console.error('Error fetching news:', error);
@@ -41,17 +58,15 @@ async function getNewsItem(slug: string) {
   }
 }
 
-type PageProps = {
-  params: Promise<{ slug: string }>;
-};
-
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const item = await getNewsItem(slug);
 
   return {
     title: item?.title || 'خبر',
-    description: item?.content?.slice(0, 160) || 'اخبار هیأت شطرنج شهرستان نیشابور',
+    description:
+      item?.content?.slice(0, 160) ||
+      'اخبار هیأت شطرنج شهرستان نیشابور',
   };
 }
 
@@ -64,37 +79,39 @@ export default async function NewsDetailPage({ params }: PageProps) {
   }
 
   return (
-    <article className="container mx-auto px-4 py-12 max-w-4xl">
+    <article className="container mx-auto max-w-4xl px-4 py-12">
       <Link
         href="/news"
-        className="inline-flex items-center gap-2 text-turquoise-600 hover:text-turquoise-700 mb-8 text-sm font-medium"
+        className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-turquoise-600 hover:text-turquoise-700"
       >
-        <ArrowRight className="w-4 h-4" />
+        <ArrowRight className="h-4 w-4" />
         بازگشت به اخبار
       </Link>
 
       <header className="mb-8">
-        <time className="text-sm text-slate-400">
-          {formatDate(item.published_at)}
-        </time>
+        {item.published_at && (
+          <time className="text-sm text-slate-400">
+            {formatDate(item.published_at)}
+          </time>
+        )}
 
-        <h1 className="text-3xl md:text-4xl font-bold text-navy-800 mt-2 leading-tight">
+        <h1 className="mt-2 text-3xl font-bold leading-tight text-navy-800 md:text-4xl">
           {item.title}
         </h1>
       </header>
 
       {item.image_url && (
-        <div className="rounded-2xl overflow-hidden mb-8 shadow-soft">
+        <div className="mb-8 overflow-hidden rounded-2xl shadow-soft">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={item.image_url}
-            alt={item.title}
-            className="w-full max-h-[480px] object-cover"
+            alt={item.title || 'تصویر خبر'}
+            className="max-h-[480px] w-full object-cover"
           />
         </div>
       )}
 
-      <div className="prose prose-lg max-w-none text-navy-800 leading-relaxed whitespace-pre-wrap">
+      <div className="prose prose-lg max-w-none whitespace-pre-wrap leading-relaxed text-navy-800">
         {item.content}
       </div>
     </article>
