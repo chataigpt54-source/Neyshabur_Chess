@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase';
 import {
@@ -66,7 +65,8 @@ export default async function HomePage() {
       className="min-h-screen overflow-hidden bg-[#f3f6f9] text-[#0b2342]"
     >
       {/* بخش اصلی ویدئویی */}
-      <section className="hero-video relative isolate flex min-h-[520px] items-center overflow-hidden bg-[#071a32] py-16 text-white md:min-h-[590px]">
+      <section className="hero-video relative isolate flex min-h-[520px] items-center justify-center overflow-hidden bg-[#071a32] py-16 text-white md:min-h-[590px]">
+        {/* ویدئوی پس‌زمینه */}
         <div className="absolute inset-0 -z-30">
           <video
             className="h-full w-full object-cover"
@@ -80,91 +80,47 @@ export default async function HomePage() {
           />
         </div>
 
-        <div className="absolute inset-0 -z-20 bg-gradient-to-l from-[#06172d]/90 via-[#071c36]/55 to-[#06172d]/30" />
+        {/* لایه تیره روی ویدئو */}
+        <div className="absolute inset-0 -z-20 bg-[#06172d]/60" />
         <div className="hero-vignette absolute inset-0 -z-10" />
 
-        {/* تزئینات هندسی */}
-        <div
-          aria-hidden="true"
-          className="hero-triangle hero-triangle-one pointer-events-none absolute -left-24 -top-24 h-[340px] w-[340px] rotate-[30deg] border border-white/20 bg-gradient-to-br from-white/20 via-white/5 to-transparent backdrop-blur-[2px]"
-        />
-
-        <div
-          aria-hidden="true"
-          className="hero-triangle hero-triangle-two pointer-events-none absolute -left-32 top-36 h-[250px] w-[250px] rotate-[30deg] border border-white/15 bg-gradient-to-br from-white/15 to-transparent"
-        />
-
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#06172d]/80 to-transparent"
-        />
-
-        <div
-          aria-hidden="true"
-          className="hero-gold-line pointer-events-none absolute inset-x-0 bottom-5 h-px"
-        />
-
-        <div className="container relative mx-auto px-5 md:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            {/* تزئینات بصری دسکتاپ */}
-            <div className="hero-visual order-2 hidden min-h-[280px] lg:block">
-              <div className="relative h-[310px]">
-                <div className="hero-glass-panel absolute bottom-2 left-3 h-40 w-64 rounded-3xl border border-white/20 bg-white/[0.06] backdrop-blur-md" />
-
-                <div className="hero-glass-panel absolute left-24 top-2 h-44 w-52 rounded-3xl border border-white/15 bg-white/[0.04] backdrop-blur-sm" />
-
-                <div className="absolute bottom-12 left-20 h-24 w-24 rounded-full bg-[#d9ad54]/15 blur-3xl" />
-
-                <div className="absolute bottom-8 left-12 max-w-52 rounded-2xl border border-white/15 bg-[#071a32]/45 p-5 backdrop-blur-md">
-                  <p className="text-sm font-bold text-white">
-                    شهر نیشابور
-                  </p>
-                  <p className="mt-2 text-xs leading-6 text-slate-300">
-                    زادگاه اندیشه، فرهنگ و حکمت
-                  </p>
-                </div>
-
-                <div className="absolute right-4 top-10 h-32 w-32 rotate-45 border border-[#edc66f]/30" />
-                <div className="absolute right-12 top-20 h-20 w-20 rotate-45 border border-white/20" />
-              </div>
-            </div>
-
-            {/* عنوان و معرفی */}
-            <div className="hero-copy relative z-10 mx-auto w-full max-w-2xl text-center lg:order-2 lg:mx-0 lg:text-right">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.07] px-4 py-2 text-xs font-semibold text-[#f3d58f] backdrop-blur-md">
+        <div className="container relative mx-auto w-full px-5 md:px-8">
+          <div className="mx-auto flex w-full max-w-4xl justify-center">
+            <div className="hero-copy relative z-10 w-full text-center">
+              <div className="mb-6 inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.07] px-5 py-2.5 text-xs font-semibold text-[#f3d58f] backdrop-blur-md sm:text-sm">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#edc66f]" />
-                به وب‌سایت رسمی
+                به وب‌سایت رسمی خوش آمدید
               </div>
 
-              <h1 className="hero-title text-3xl font-black leading-[1.7] tracking-tight sm:text-4xl lg:text-5xl">
+              <h1 className="hero-title mx-auto text-center text-3xl font-black leading-relaxed tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
                 <span className="block">هیأت شطرنج</span>
-                <span className="hero-title-accent mt-1 block">
+                <span className="hero-title-accent mt-2 block">
                   شهرستان نیشابور
                 </span>
               </h1>
 
-              <p className="mt-5 text-base font-semibold text-[#e6d3a6] sm:text-lg">
+              <p className="mt-6 text-base font-semibold text-[#e6d3a6] sm:text-lg md:text-xl">
                 شطرنج؛ زبان مشترک اندیشه‌ها
               </p>
 
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-8 text-slate-200/90 lg:mx-0">
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-slate-200/90 sm:text-base md:leading-9">
                 اینجا جایی است برای علاقه‌مندان شطرنج؛ از مبتدی تا حرفه‌ای،
                 برای یادگیری، رقابت و رشد در کنار هم.
               </p>
 
-              <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/tournaments"
-                  className="btn-alive btn-alive-gold group inline-flex items-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#10213a] shadow-lg"
+                  className="btn-alive btn-alive-gold group inline-flex items-center justify-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold text-[#10213a] shadow-lg"
                 >
                   <span>مشاهده مسابقات</span>
-                  <Calendar className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:rotate-6" />
+                  <Calendar className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
                   <ArrowUpLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:-translate-x-1" />
                 </Link>
 
                 <Link
                   href="/news"
-                  className="btn-alive btn-alive-outline group inline-flex items-center gap-3 rounded-full border border-white/35 bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md"
+                  className="btn-alive btn-alive-outline group inline-flex items-center justify-center gap-3 rounded-full border border-white/35 bg-white/[0.06] px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md"
                 >
                   <span>آخرین اخبار</span>
                   <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1.5" />
@@ -174,7 +130,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        {/* اتصال منحنی به بخش روشن */}
+        {/* اتصال نرم به بخش روشن */}
         <div className="pointer-events-none absolute bottom-0 left-0 right-0">
           <svg
             viewBox="0 0 1440 65"
@@ -275,22 +231,12 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* کارت شعر عطار نیشابوری */}
+          {/* شعر عطار نیشابوری */}
           <aside className="quote-card relative flex min-h-[350px] flex-col justify-between overflow-hidden rounded-3xl border border-[#edc66f]/20 bg-gradient-to-br from-[#102b4b] via-[#0b2342] to-[#071a32] p-7 text-white shadow-xl lg:col-span-1">
-            <div
-              aria-hidden="true"
-              className="quote-decoration pointer-events-none absolute -bottom-12 -left-10 h-48 w-48 rounded-full border border-white/10"
-            />
-
-            <div
-              aria-hidden="true"
-              className="quote-decoration pointer-events-none absolute -bottom-5 -left-3 h-32 w-32 rounded-full border border-[#edc66f]/20"
-            />
-
             <div className="relative">
               <div className="mb-4 flex items-center gap-2 text-xs font-bold text-[#edc66f]">
                 <BookOpen className="h-4 w-4" />
-                گنجینهٔ ادب نیشابور
+                گنجینه ادب نیشابور
               </div>
 
               <span className="block text-4xl font-black leading-none text-[#edc66f]">
@@ -319,7 +265,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* استایل‌ها و انیمیشن‌های اختصاصی */}
+      {/* انیمیشن‌ها و استایل‌های اختصاصی */}
       <style>{`
         .hero-video {
           isolation: isolate;
@@ -328,61 +274,28 @@ export default async function HomePage() {
         .hero-vignette {
           background:
             radial-gradient(
-              ellipse at 25% 35%,
+              ellipse at center,
               transparent 0%,
-              rgba(4, 18, 36, .2) 48%,
-              rgba(4, 18, 36, .65) 100%
+              rgba(4, 18, 36, .2) 55%,
+              rgba(4, 18, 36, .5) 100%
             ),
             linear-gradient(
               0deg,
-              rgba(5, 21, 40, .72),
-              transparent 38%
+              rgba(5, 21, 40, .65),
+              transparent 45%
             );
-        }
-
-        .hero-triangle {
-          clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-        }
-
-        .hero-triangle-one {
-          animation: triangle-float 9s ease-in-out infinite alternate;
-        }
-
-        .hero-triangle-two {
-          animation: triangle-float 11s ease-in-out infinite alternate-reverse;
-        }
-
-        .hero-gold-line {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            #edc66f,
-            rgba(255,255,255,.5),
-            transparent
-          );
-          opacity: .8;
-          box-shadow: 0 0 18px rgba(237,198,111,.3);
-        }
-
-        .hero-glass-panel {
-          box-shadow: 0 24px 80px rgba(0,0,0,.12);
-          animation: glass-float 7s ease-in-out infinite alternate;
-        }
-
-        .hero-glass-panel:nth-child(2) {
-          animation-delay: -3s;
         }
 
         .hero-title {
           overflow-wrap: normal;
           word-break: normal;
+          text-wrap: balance;
         }
 
         .hero-title-accent {
-          display: block;
           width: fit-content;
           max-width: 100%;
-          margin-inline: 0;
+          margin-inline: auto;
           background: linear-gradient(
             110deg,
             #fff1c5 0%,
@@ -480,7 +393,7 @@ export default async function HomePage() {
         }
 
         .section-heading:hover .heading-icon {
-          transform: translateY(-2px) rotate(-4deg);
+          transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(11,35,66,.18);
         }
 
@@ -504,7 +417,7 @@ export default async function HomePage() {
         }
 
         .announcement-card:hover .announcement-icon {
-          transform: scale(1.06) rotate(-5deg);
+          transform: scale(1.06);
           background-color: rgba(237,198,111,.25);
         }
 
@@ -517,36 +430,11 @@ export default async function HomePage() {
           box-shadow: 0 24px 50px rgba(11,35,66,.17);
         }
 
-        .quote-decoration {
-          transition: transform .7s cubic-bezier(.2,.8,.2,1);
-        }
-
-        .quote-card:hover .quote-decoration {
-          transform: scale(1.12) translate(5px, -5px);
-        }
-
-        @keyframes triangle-float {
-          from {
-            transform: rotate(30deg) translate3d(0, 0, 0);
-          }
-          to {
-            transform: rotate(34deg) translate3d(10px, -8px, 0);
-          }
-        }
-
-        @keyframes glass-float {
-          from {
-            transform: translateY(0) rotate(0deg);
-          }
-          to {
-            transform: translateY(-8px) rotate(1deg);
-          }
-        }
-
         @keyframes title-shimmer {
           0% {
             background-position: 200% center;
           }
+
           100% {
             background-position: -200% center;
           }
@@ -557,6 +445,7 @@ export default async function HomePage() {
             opacity: 0;
             transform: translateY(14px);
           }
+
           to {
             opacity: 1;
             transform: translateY(0);
@@ -570,9 +459,6 @@ export default async function HomePage() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .hero-triangle-one,
-          .hero-triangle-two,
-          .hero-glass-panel,
           .hero-title-accent,
           .news-entrance,
           .announcement-card {
