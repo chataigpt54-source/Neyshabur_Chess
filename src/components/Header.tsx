@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Menu, X, ChevronLeft } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navItems = [
@@ -28,68 +28,63 @@ export default function Header({
   return (
     <header
       dir="rtl"
-      className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#091a30]/90 shadow-[0_5px_24px_rgba(4,15,30,0.10)] backdrop-blur-2xl"
+      className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#091a30]/90 shadow-lg backdrop-blur-2xl"
     >
-      {/* خط طلایی بسیار ظریف */}
-      <div className="h-[2px] w-full bg-gradient-to-l from-transparent via-[#d4b16a]/70 to-transparent" />
+      <div className="mx-auto max-w-[1600px] px-3 sm:px-5 lg:px-7">
+        <div className="flex min-h-[82px] items-center justify-between gap-3">
 
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-[78px] items-center justify-between gap-5 lg:min-h-[88px]">
-
-          {/* لوگو و نام مجموعه */}
+          {/* لوگو و نام هیأت */}
           <Link
             href="/"
             onClick={() => setOpen(false)}
             aria-label="صفحه اصلی هیأت شطرنج شهرستان نیشابور"
-            className="group flex shrink-0 items-center gap-3"
+            className="group flex shrink-0 items-center gap-2"
           >
-            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full sm:h-[54px] sm:w-[54px]">
+            <div className="relative h-10 w-10 shrink-0 sm:h-12 sm:w-12">
               <Image
                 src={src}
                 alt="لوگوی هیأت شطرنج شهرستان نیشابور"
                 fill
-                sizes="54px"
+                sizes="48px"
                 priority
-                className="object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+                className="object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
 
-            <div className="flex flex-col">
-              <span className="text-sm font-extrabold tracking-tight text-white sm:text-base">
+            <div className="hidden flex-col sm:flex">
+              <span className="whitespace-nowrap text-sm font-extrabold text-white lg:text-base">
                 هیأت شطرنج
               </span>
-              <span className="mt-1 text-[11px] font-medium text-[#d9bd80] sm:text-xs">
+              <span className="mt-1 whitespace-nowrap text-[11px] text-[#d9bd80] lg:text-xs">
                 شهرستان نیشابور
               </span>
             </div>
           </Link>
 
-          {/* منوی دسکتاپ */}
+          {/* منوی دسکتاپ؛ همه دکمه‌ها در یک ردیف */}
           <nav
             aria-label="منوی اصلی"
-            className="hidden items-center gap-0.5 xl:flex"
+            className="hidden flex-1 items-center justify-center gap-1 xl:flex 2xl:gap-2"
           >
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative whitespace-nowrap px-2.5 py-3 text-[12px] font-medium text-slate-300 transition-colors duration-200 hover:text-white 2xl:px-3 2xl:text-[13px]"
+                className="whitespace-nowrap rounded-full border border-white/60 bg-white/90 px-3 py-2.5 text-[11px] font-bold text-[#0b2342] shadow-sm backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:shadow-md lg:px-3.5 lg:text-xs 2xl:px-4 2xl:text-[13px]"
               >
                 {item.label}
-
-                <span className="absolute bottom-1 right-2.5 left-2.5 h-px origin-right scale-x-0 bg-[#d9bd80] transition-transform duration-200 group-hover:scale-x-100 2xl:right-3 2xl:left-3" />
               </Link>
             ))}
           </nav>
 
-          {/* منوی موبایل */}
+          {/* دکمه منوی موبایل */}
           <button
             type="button"
             onClick={() => setOpen((prev) => !prev)}
             aria-label={open ? 'بستن منو' : 'باز کردن منو'}
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white transition-colors hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9bd80]/70 xl:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/60 bg-white/90 text-[#0b2342] shadow-sm backdrop-blur-md transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d9bd80] xl:hidden"
           >
             {open ? (
               <X className="h-5 w-5" />
@@ -99,7 +94,7 @@ export default function Header({
           </button>
         </div>
 
-        {/* پنل بازشونده موبایل */}
+        {/* منوی موبایل */}
         <AnimatePresence initial={false}>
           {open && (
             <motion.div
@@ -107,37 +102,30 @@ export default function Header({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.23, ease: 'easeInOut' }}
+              transition={{ duration: 0.22, ease: 'easeInOut' }}
               className="overflow-hidden xl:hidden"
             >
               <nav
                 aria-label="منوی موبایل"
-                className="border-t border-white/[0.09] py-3"
+                className="flex flex-wrap justify-center gap-2 border-t border-white/10 py-4"
               >
                 {navItems.map((item, index) => (
                   <motion.div
                     key={item.href}
-                    initial={{ opacity: 0, x: 8 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.025, duration: 0.18 }}
                   >
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className="flex items-center justify-between rounded-lg px-3 py-3 text-sm text-slate-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+                      className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/70 bg-white/90 px-4 py-2 text-xs font-bold text-[#0b2342] shadow-sm backdrop-blur-md transition hover:bg-white"
                     >
-                      <span>{item.label}</span>
-                      <ChevronLeft className="h-4 w-4 text-slate-500" />
+                      {item.label}
                     </Link>
                   </motion.div>
                 ))}
               </nav>
-
-              <div className="border-t border-white/[0.07] py-3 text-center">
-                <span className="text-[11px] text-slate-500">
-                  هیأت شطرنج شهرستان نیشابور
-                </span>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
